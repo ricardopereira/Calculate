@@ -1,12 +1,13 @@
 //
 //  AppDelegate.h
-//  Calculadora
+//  Calculate
 //
-//  Created by Ricardo Pereira on 10/7/13.
+//  Created by Ricardo Pereira on 10/19/13.
 //  Copyright (c) 2013 Ricardo Pereira. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+#import "Calculator.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

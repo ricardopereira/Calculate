@@ -1,25 +1,26 @@
 //
 //  AppDelegate.m
-//  Calculadora
+//  Calculate
 //
-//  Created by Ricardo Pereira on 10/7/13.
+//  Created by Ricardo Pereira on 10/19/13.
 //  Copyright (c) 2013 Ricardo Pereira. All rights reserved.
 //
 
 #import "AppDelegate.h"
 #import "Calculator.h"
-#import "CalcViewController.h"
+#import "CalculatorViewController.h"
 
-@implementation AppDelegate {
-    Calculator *calc;
-}
+@implementation AppDelegate
+
+Calculator *calculator;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    calc = [[Calculator alloc] init];
+    // Override point for customization after application launch.
+    calculator = [[Calculator alloc] init];
     
-    CalcViewController *calcFrame = (CalcViewController *)self.window.rootViewController;
-    calcFrame.calc = calc;
+    CalculatorViewController *defaultView = (CalculatorViewController *)self.window.rootViewController;
+    defaultView.calculator = calculator;
     
     return YES;
 }
