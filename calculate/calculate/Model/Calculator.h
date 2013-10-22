@@ -16,6 +16,10 @@
 - (id)init;
 - (void)clear;
 - (BOOL)isEmpty;
+- (void)add:(NSObject*)value;
+- (BOOL)isReadyForNewNumber;
+- (int)countStatements;
+- (double)getTotal;
 
 @property (strong, nonatomic) NSNumberFormatter *format;
 

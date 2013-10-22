@@ -23,5 +23,17 @@
 @property (strong, nonatomic) IBOutlet UIButton *subtractButton;
 @property (strong, nonatomic) IBOutlet UIButton *addButton;
 @property (strong, nonatomic) IBOutlet UIButton *totalButton;
+@property (strong, nonatomic) IBOutlet UIButton *dotButton;
+
+@property (strong, nonatomic) IBOutlet UIButton *buttonNine;
+@property (strong, nonatomic) IBOutlet UIButton *buttonEight;
+@property (strong, nonatomic) IBOutlet UIButton *buttonSeven;
+@property (strong, nonatomic) IBOutlet UIButton *buttonSix;
+@property (strong, nonatomic) IBOutlet UIButton *buttonFive;
+@property (strong, nonatomic) IBOutlet UIButton *buttonFour;
+@property (strong, nonatomic) IBOutlet UIButton *buttonThree;
+@property (strong, nonatomic) IBOutlet UIButton *buttonTwo;
+@property (strong, nonatomic) IBOutlet UIButton *buttonOne;
+@property (strong, nonatomic) IBOutlet UIButton *buttonZero;
 
 @end

@@ -419,6 +419,7 @@
 				INFOPLIST_FILE = "Calculate/Calculate-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -434,6 +435,7 @@
 				INFOPLIST_FILE = "Calculate/Calculate-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -499,6 +501,7 @@
 				D75BE8F91811FDB600E53949 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D75BE8FA1811FDB600E53949 /* Build configuration list for PBXNativeTarget "CalculateTests" */ = {
 			isa = XCConfigurationList;
@@ -507,6 +510,7 @@
 				D75BE8FC1811FDB600E53949 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

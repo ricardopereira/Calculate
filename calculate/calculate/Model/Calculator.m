@@ -16,9 +16,10 @@
 @synthesize format;
 
 - (id)init {
-    if ( self = [super init] ) {
+    if (self = [super init]) {
         format = [[NSNumberFormatter alloc] init];
         [format setNumberStyle:NSNumberFormatterDecimalStyle];
+        [format setGroupingSeparator:@""];
         [format setAlwaysShowsDecimalSeparator:NO];
         [format setLocale:[NSLocale currentLocale]];
         
@@ -37,6 +38,36 @@
         return YES;
     else
         return NO;
+}
+
+- (void)add:(NSObject *)value {
+    [statement addObject:value];
+}
+
+- (BOOL)isReadyForNewNumber {
+    if ([statement lastObject] != nil)
+        return [(NSObject *)[statement lastObject] isKindOfClass:[NSString class]];
+    else
+        return YES;
+}
+
+- (int)countStatements {
+    return statement.count;
+}
+
+- (double)getTotal {
+    
+    // ToDo
+    if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"+"])
+        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] + [(NSNumber *)[statement objectAtIndex:2] doubleValue];
+    else if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"-"])
+        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] - [(NSNumber *)[statement objectAtIndex:2] doubleValue];
+    else if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"/"])
+        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] + [(NSNumber *)[statement objectAtIndex:2] doubleValue];
+    else if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"*"])
+        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] * [(NSNumber *)[statement objectAtIndex:2] doubleValue];
+    else
+        return 0;
 }
 
 @end
