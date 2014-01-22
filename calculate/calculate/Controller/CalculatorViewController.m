@@ -135,7 +135,7 @@
 
 - (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd
 {
-    if (startCountingDecimals && countDecimals == 12)
+    if (startCountingDecimals && countDecimals == DECIMALS)
         return;
     
     if (forceAdd || [self canAdd])

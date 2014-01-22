@@ -10,6 +10,8 @@
 #import "Common.h"
 #import "Expression.h"
 
+#define DECIMALS 12
+
 @interface Calculator : Common
 {
     //Public variables

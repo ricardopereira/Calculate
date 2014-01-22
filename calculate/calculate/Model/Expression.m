@@ -62,23 +62,32 @@
 
 - (BOOL)isEmpty
 {
-    if (calculus.count == 0)
-        return YES;
-    else
-        return NO;
+    return calculus.count == 0;
 }
 
 - (double)calculate
 {
     Fraction* f = [Fraction fractionWithValue:0];
+    Operator* op = nil;
     
-    // Calculate the all expression
+    // Calculate the complete expression
     for (id item in calculus)
     {
-        if ([item isKindOfClass:[Fraction class]])
+        if (op != nil)
         {
+            [f perform:op With:(Fraction*)item];
+            // Force getting the next operand
+            op = nil;
+        }
+        else if ([item isKindOfClass:[Fraction class]])
+        {
+            // First fraction / First element
             [f addWith:(Fraction*)item];
-
+        }
+        else if ([item isKindOfClass:[Operator class]])
+        {
+            // Operator to use on next
+            op = (Operator*)item;
         }
     }
     return [f getAsDouble];

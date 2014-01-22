@@ -93,6 +93,26 @@
     self.denominator *= value.numerator;
 }
 
+- (void)perform: (Operator*)operand With: (Fraction*)value
+{
+    /**/ if ([operand.type isEqualToString:@"+"])
+    {
+        [self addWith:value];
+    }
+    else if ([operand.type isEqualToString:@"-"])
+    {
+        [self subtractWith:value];
+    }
+    else if ([operand.type isEqualToString:@"*"])
+    {
+        [self multiplyWith:value];
+    }
+    else if ([operand.type isEqualToString:@"/"])
+    {
+        [self divideWith:value];
+    }
+}
+
 - (int)getGreatestCommonDivisorWithNum:(int)n andDen:(int)d
 {
 	int aux;

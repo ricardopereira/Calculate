@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Common.h"
+#import "Operator.h"
 
 @interface Fraction : Common
 {
@@ -25,6 +26,7 @@
 - (void)subtractWith: (Fraction*)value;
 - (void)multiplyWith: (Fraction*)value;
 - (void)divideWith: (Fraction*)value;
+- (void)perform: (Operator*)operand With: (Fraction*)value;
 
 - (void)reduce;
 

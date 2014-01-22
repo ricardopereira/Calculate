@@ -29,7 +29,7 @@
         [format setNumberStyle:NSNumberFormatterDecimalStyle];
         [format setGroupingSeparator:@""];
         [format setAlwaysShowsDecimalSeparator:NO];
-        [format setMaximumFractionDigits:12];
+        [format setMaximumFractionDigits:DECIMALS];
         [format setLocale:[NSLocale currentLocale]];
         
         // Expression
