@@ -7,20 +7,31 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Common.h"
+#import "Expression.h"
 
-@interface Calculator : NSObject
+@interface Calculator : Common
 {
-
+    //Public variables
 }
 
+// Public properties and methods
 - (id)init;
-- (void)clear;
-- (BOOL)isEmpty;
-- (void)add:(NSObject*)value;
-- (BOOL)isReadyForNewNumber;
-- (int)countStatements;
-- (double)getTotal;
+
+- (Expression*)newExpression;
+- (void)add: (Expression*)expr;
+
+- (void)clearHistory;
+- (int)countHistory;
+
+- (double)getTotal: (int)index;
+
+- (NSString*)getAsString;
 
 @property (strong, nonatomic) NSNumberFormatter *format;
+
+// Events
+@property (nonatomic, copy) void (^eventBeforeClear)(NSObject*);
+@property (nonatomic, copy) void (^eventAfterClear)(NSObject*);
 
 @end

@@ -8,64 +8,79 @@
 
 #import "Calculator.h"
 
+@interface Calculator ()
+// Private properties and methods
+@end
+
 @implementation Calculator
 {
-    NSMutableArray *statement;
+    // Private variables
+    NSMutableArray *history;
 }
 
 @synthesize format;
 
-- (id)init {
-    if (self = [super init]) {
+- (id)init
+{
+    if (self = [super init])
+    {
+        // Create formatter
         format = [[NSNumberFormatter alloc] init];
         [format setNumberStyle:NSNumberFormatterDecimalStyle];
         [format setGroupingSeparator:@""];
         [format setAlwaysShowsDecimalSeparator:NO];
+        [format setMaximumFractionDigits:12];
         [format setLocale:[NSLocale currentLocale]];
         
-        statement = [[NSMutableArray alloc] init];
+        // Expression
+        history = [[NSMutableArray alloc] init];
         return self;
-    } else
+    }
+    else
         return nil;
 }
 
-- (void)clear {
-    [statement removeAllObjects];
+- (void)add: (Expression*)expr
+{
+    [history addObject:expr];
 }
 
-- (BOOL)isEmpty {
-    if (statement.count == 0)
-        return YES;
-    else
-        return NO;
+- (Expression*)newExpression
+{
+    return [[Expression alloc] init];
 }
 
-- (void)add:(NSObject *)value {
-    [statement addObject:value];
-}
-
-- (BOOL)isReadyForNewNumber {
-    if ([statement lastObject] != nil)
-        return [(NSObject *)[statement lastObject] isKindOfClass:[NSString class]];
-    else
-        return YES;
-}
-
-- (int)countStatements {
-    return statement.count;
-}
-
-- (double)getTotal {
+- (NSString*)getAsString
+{
+    // Inherited
+    //[super getHasString];
     
-    // ToDo
-    if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"+"])
-        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] + [(NSNumber *)[statement objectAtIndex:2] doubleValue];
-    else if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"-"])
-        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] - [(NSNumber *)[statement objectAtIndex:2] doubleValue];
-    else if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"/"])
-        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] + [(NSNumber *)[statement objectAtIndex:2] doubleValue];
-    else if ([(NSString *)[statement objectAtIndex:1] isEqualToString:@"*"])
-        return [(NSNumber *)[statement objectAtIndex:0] doubleValue] * [(NSNumber *)[statement objectAtIndex:2] doubleValue];
+    NSString* result = @"Expression: ";
+    
+    for (id item in history)
+    {
+        if ([item isKindOfClass:[Fraction class]])
+            result = [result stringByAppendingFormat:@"%@",[(Fraction*)item getAsString]];
+    }
+    return result;
+}
+
+- (void)clearHistory
+{
+    if (self.eventBeforeClear) self.eventBeforeClear(self);
+    [history removeAllObjects];
+    if (self.eventAfterClear) self.eventAfterClear(self);
+}
+
+- (int)countHistory
+{
+    return (int)history.count;
+}
+
+- (double)getTotal: (int)index
+{
+    if (history.count != 0)
+        return ((Expression*)[history objectAtIndex:index]).calculate;
     else
         return 0;
 }

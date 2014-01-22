@@ -10,9 +10,14 @@
 #import "Calculator.h"
 
 @interface CalculatorViewController : UIViewController
+{
+    // Public variables
+}
 
+// Public properties and methods
 @property (strong, nonatomic) Calculator *calculator;
 
+// Layout
 @property (strong, nonatomic) IBOutlet UILabel *resultLabel;
 
 @property (strong, nonatomic) IBOutlet UIButton *clearButton;
