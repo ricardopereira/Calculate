@@ -63,6 +63,12 @@
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(didOrientationDeviceChanged) name:UIDeviceOrientationDidChangeNotification object:nil];
+    // Light Status Bar
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 - (void)didReceiveMemoryWarning
@@ -372,10 +378,10 @@
 
 - (void)loadHorizontalLayout
 {
-    // Dicionário com as instâncias dos componentes a usar para criar as constraints
+    // Dictionary with instances of components for Visual Format
     NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultLabel, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton);
     
-    // Remover os contraints atuais
+    // Remove current constraints
     NSLog(@"%d",self.view.constraints.count);
     [self.view removeConstraints:self.view.constraints];
     
@@ -410,10 +416,10 @@
 
 - (void)loadVerticalLayout
 {
-    // Dicionário com as instâncias dos componentes a usar para criar as constraints
+    // Dictionary with instances of components for Visual Format
     NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultLabel, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton);
     
-    // Remover os contraints atuais
+    // Remove current constraints
     NSLog(@"%d",self.view.constraints.count);
     [self.view removeConstraints:self.view.constraints];
     
