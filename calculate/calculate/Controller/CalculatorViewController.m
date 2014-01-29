@@ -83,8 +83,9 @@
     if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight)
     {
         [self loadHorizontalLayout];
+        
         [UIView animateWithDuration:0.3 animations:^{
-            self.dotButton.alpha = 0.0f;
+            self.viewBill.alpha = 1.0f;
         }];
     }
     else if (orientation == UIDeviceOrientationFaceUp || orientation == UIDeviceOrientationFaceDown)
@@ -94,8 +95,9 @@
     else
     {
         [self loadVerticalLayout];
+        
         [UIView animateWithDuration:0.3 animations:^{
-            self.dotButton.alpha = 1.0f;
+            self.viewBill.alpha = 0.0f;
         }];
     }
 }
@@ -379,29 +381,34 @@
 - (void)loadHorizontalLayout
 {
     // Dictionary with instances of components for Visual Format
-    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultLabel, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton);
+    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultLabel, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton, _viewBill);
+    
+    
+    // Font Size
+    self.resultLabel.font = [self.resultLabel.font fontWithSize:60];
     
     // Remove current constraints
-    NSLog(@"%d",self.view.constraints.count);
     [self.view removeConstraints:self.view.constraints];
     
     // Constraints
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-20-[_resultLabel]-20-|" options:0 metrics:0 views:viewsDictionary]];
-    
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_resultLabel]-15-|" options:0 metrics:0 views:viewsDictionary]];
+        
     // Horizontal
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_clearButton][_togglePosNegButton(==_clearButton)][_percentButton(==_togglePosNegButton)][_divisionButton(==_percentButton)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_clearButton][_togglePosNegButton(==_clearButton)][_percentButton(==_togglePosNegButton)][_divisionButton(==_percentButton)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_multiplyButton(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_multiplyButton(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_subtractButton(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_subtractButton(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_addButton(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_addButton(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonZero][_totalButton(==_buttonTwo)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonZero][_dotButton(==_buttonTwo)][_totalButton(==_dotButton)]|" options:0 metrics:0 views:viewsDictionary]];
     
     // Vertical
+    
+    //[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultLabel][_viewBill]|" options:0 metrics:0 views:viewsDictionary]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultLabel][_clearButton(==_resultLabel)][_buttonSeven(==_clearButton)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
     
@@ -410,8 +417,6 @@
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultLabel][_percentButton(==_clearButton)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_dotButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultLabel][_divisionButton(==_clearButton)][_multiplyButton(==_buttonSeven)][_subtractButton(==_buttonFour)][_addButton(==_buttonOne)][_totalButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
-    
-    NSLog(@"%d",self.view.constraints.count);
 }
 
 - (void)loadVerticalLayout
@@ -419,8 +424,10 @@
     // Dictionary with instances of components for Visual Format
     NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultLabel, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton);
     
+    // Font Size
+    self.resultLabel.font = [self.resultLabel.font fontWithSize:100];
+    
     // Remove current constraints
-    NSLog(@"%d",self.view.constraints.count);
     [self.view removeConstraints:self.view.constraints];
     
     // Constraints
