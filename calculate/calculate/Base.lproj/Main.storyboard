@@ -262,7 +262,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <containerView contentMode="left" id="e3i-cL-kbW">
-                                <rect key="frame" x="0.0" y="0.0" width="640" height="768"/>
+                                <rect key="frame" x="0.0" y="0.0" width="170" height="768"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                                 <connections>
@@ -296,7 +296,7 @@
                         <outlet property="subtractButton" destination="y0S-9w-9jG" id="xQi-JK-I2v"/>
                         <outlet property="togglePosNegButton" destination="Jc0-gR-hol" id="Of3-5e-KmM"/>
                         <outlet property="totalButton" destination="SSH-e1-sqD" id="yNe-kJ-fRa"/>
-                        <outlet property="viewBill" destination="e3i-cL-kbW" id="oOw-HQ-kMh"/>
+                        <outlet property="viewBill" destination="e3i-cL-kbW" id="73v-Oc-1t6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -308,7 +308,7 @@
             <objects>
                 <viewController automaticallyAdjustsScrollViewInsets="NO" id="UZb-2R-sZh" sceneMemberID="viewController">
                     <view key="view" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="yyi-Ss-f8e">
-                        <rect key="frame" x="0.0" y="0.0" width="640" height="768"/>
+                        <rect key="frame" x="0.0" y="0.0" width="170" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <simulatedOrientationMetrics key="simulatedOrientationMetrics" orientation="landscapeRight"/>

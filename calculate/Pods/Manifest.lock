@@ -1,0 +1,13 @@
+PODS:
+  - Canvas (0.1)
+  - Mixpanel (2.3.0)
+
+DEPENDENCIES:
+  - Canvas (~> 0.1)
+  - Mixpanel
+
+SPEC CHECKSUMS:
+  Canvas: 1d94806aab1ef0486df719f80f47eccf40a08ae5
+  Mixpanel: a3536b6bf7f88bd8a6113392f91e9dc689c58434
+
+COCOAPODS: 0.29.0

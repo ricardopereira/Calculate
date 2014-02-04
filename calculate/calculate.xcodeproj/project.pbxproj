@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CE4120FFECEF4681A689ABA5 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 341AB9FBAB734FF1823F0F91 /* libPods.a */; };
 		D70AB2ED188F52E400A1B512 /* Fraction.m in Sources */ = {isa = PBXBuildFile; fileRef = D70AB2EC188F52E400A1B512 /* Fraction.m */; };
 		D74BCEE818901146008E19BB /* Expression.m in Sources */ = {isa = PBXBuildFile; fileRef = D74BCEE718901146008E19BB /* Expression.m */; };
 		D74BCEEB189016A5008E19BB /* Common.m in Sources */ = {isa = PBXBuildFile; fileRef = D74BCEEA189016A5008E19BB /* Common.m */; };
 		D74BCEEE189030B4008E19BB /* Operator.m in Sources */ = {isa = PBXBuildFile; fileRef = D74BCEED189030B4008E19BB /* Operator.m */; };
+		D75B21C8189BED020081B291 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D75B21C7189BED020081B291 /* Crashlytics.framework */; };
 		D75BE8C91811FDB500E53949 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D75BE8C81811FDB500E53949 /* Foundation.framework */; };
 		D75BE8CB1811FDB500E53949 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D75BE8CA1811FDB500E53949 /* CoreGraphics.framework */; };
 		D75BE8CD1811FDB500E53949 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D75BE8CC1811FDB500E53949 /* UIKit.framework */; };
@@ -26,6 +28,7 @@
 		D75BE8F41811FDB600E53949 /* CalculateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D75BE8F31811FDB600E53949 /* CalculateTests.m */; };
 		D75BE8FF1811FECB00E53949 /* CalculatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D75BE8FE1811FECB00E53949 /* CalculatorViewController.m */; };
 		D75BE9031811FF1D00E53949 /* Calculator.m in Sources */ = {isa = PBXBuildFile; fileRef = D75BE9021811FF1D00E53949 /* Calculator.m */; };
+		D7CD3B1618A070EE00BD830B /* CalculatorBill.xib in Resources */ = {isa = PBXBuildFile; fileRef = D7CD3B1518A070EE00BD830B /* CalculatorBill.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,14 +42,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		132070947D0F4FC8A2E9747A /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		341AB9FBAB734FF1823F0F91 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		D70AB2EB188F52E400A1B512 /* Fraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fraction.h; path = Model/Fraction.h; sourceTree = "<group>"; };
 		D70AB2EC188F52E400A1B512 /* Fraction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Fraction.m; path = Model/Fraction.m; sourceTree = "<group>"; };
+		D721BADA18A142E100337A2D /* AppConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppConfig.h; sourceTree = "<group>"; };
 		D74BCEE618901146008E19BB /* Expression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Expression.h; path = Model/Expression.h; sourceTree = "<group>"; };
 		D74BCEE718901146008E19BB /* Expression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Expression.m; path = Model/Expression.m; sourceTree = "<group>"; };
 		D74BCEE9189016A5008E19BB /* Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Common.h; path = Model/Common.h; sourceTree = "<group>"; };
 		D74BCEEA189016A5008E19BB /* Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Common.m; path = Model/Common.m; sourceTree = "<group>"; };
 		D74BCEEC189030B4008E19BB /* Operator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operator.h; path = Model/Operator.h; sourceTree = "<group>"; };
 		D74BCEED189030B4008E19BB /* Operator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Operator.m; path = Model/Operator.m; sourceTree = "<group>"; };
+		D75B21C7189BED020081B291 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		D75BE8C51811FDB500E53949 /* Calculate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D75BE8C81811FDB500E53949 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D75BE8CA1811FDB500E53949 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -68,6 +75,7 @@
 		D75BE8FE1811FECB00E53949 /* CalculatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CalculatorViewController.m; path = Controller/CalculatorViewController.m; sourceTree = "<group>"; };
 		D75BE9011811FF1D00E53949 /* Calculator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Calculator.h; path = Model/Calculator.h; sourceTree = "<group>"; };
 		D75BE9021811FF1D00E53949 /* Calculator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Calculator.m; path = Model/Calculator.m; sourceTree = "<group>"; };
+		D7CD3B1518A070EE00BD830B /* CalculatorBill.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CalculatorBill.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +85,9 @@
 			files = (
 				D75BE8CB1811FDB500E53949 /* CoreGraphics.framework in Frameworks */,
 				D75BE8CD1811FDB500E53949 /* UIKit.framework in Frameworks */,
+				D75B21C8189BED020081B291 /* Crashlytics.framework in Frameworks */,
 				D75BE8C91811FDB500E53949 /* Foundation.framework in Frameworks */,
+				CE4120FFECEF4681A689ABA5 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +111,7 @@
 				D75BE8ED1811FDB500E53949 /* CalculateTests */,
 				D75BE8C71811FDB500E53949 /* Frameworks */,
 				D75BE8C61811FDB500E53949 /* Products */,
+				132070947D0F4FC8A2E9747A /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,10 +127,12 @@
 		D75BE8C71811FDB500E53949 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D75B21C7189BED020081B291 /* Crashlytics.framework */,
 				D75BE8C81811FDB500E53949 /* Foundation.framework */,
 				D75BE8CA1811FDB500E53949 /* CoreGraphics.framework */,
 				D75BE8CC1811FDB500E53949 /* UIKit.framework */,
 				D75BE8E71811FDB500E53949 /* XCTest.framework */,
+				341AB9FBAB734FF1823F0F91 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -129,6 +142,7 @@
 			children = (
 				D75BE8D71811FDB500E53949 /* AppDelegate.h */,
 				D75BE8D81811FDB500E53949 /* AppDelegate.m */,
+				D721BADA18A142E100337A2D /* AppConfig.h */,
 				D75BE8DA1811FDB500E53949 /* Main.storyboard */,
 				D75BE9041811FF2100E53949 /* Model */,
 				D75BE9051811FF4F00E53949 /* View */,
@@ -197,6 +211,7 @@
 		D75BE9051811FF4F00E53949 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				D7CD3B1518A070EE00BD830B /* CalculatorBill.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -208,9 +223,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D75BE8F71811FDB600E53949 /* Build configuration list for PBXNativeTarget "Calculate" */;
 			buildPhases = (
+				6C70B212BEE840FEACFD1E8E /* Check Pods Manifest.lock */,
 				D75BE8C11811FDB500E53949 /* Sources */,
 				D75BE8C21811FDB500E53949 /* Frameworks */,
 				D75BE8C31811FDB500E53949 /* Resources */,
+				D75B21C6189BEC920081B291 /* ShellScript */,
+				30479B4EA2924052BCC9DBF2 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -280,6 +298,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D7CD3B1618A070EE00BD830B /* CalculatorBill.xib in Resources */,
 				D75BE8E11811FDB500E53949 /* Images.xcassets in Resources */,
 				D75BE8D31811FDB500E53949 /* InfoPlist.strings in Resources */,
 				D75BE8DC1811FDB500E53949 /* Main.storyboard in Resources */,
@@ -295,6 +314,52 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		30479B4EA2924052BCC9DBF2 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6C70B212BEE840FEACFD1E8E /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D75B21C6189BEC920081B291 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run d8e4a998430741c25fc8939d85d1dee852ab2fb9";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D75BE8C11811FDB500E53949 /* Sources */ = {
@@ -432,36 +497,46 @@
 		};
 		D75BE8F81811FDB600E53949 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 132070947D0F4FC8A2E9747A /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Calculate/Calculate-Prefix.pch";
 				INFOPLIST_FILE = "Calculate/Calculate-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "60986C3D-621A-4D1E-AC2A-4163D578EF57";
-				SDKROOT = iphoneos7.0;
+				SDKROOT = iphoneos;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		D75BE8F91811FDB600E53949 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 132070947D0F4FC8A2E9747A /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Calculate/Calculate-Prefix.pch";
 				INFOPLIST_FILE = "Calculate/Calculate-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "28204232-A00C-4834-94AF-8AB2CE93FB02";
-				SDKROOT = iphoneos7.0;
+				SDKROOT = iphoneos;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

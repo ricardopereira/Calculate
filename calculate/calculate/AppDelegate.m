@@ -6,7 +6,13 @@
 //  Copyright (c) 2013 Ricardo Pereira. All rights reserved.
 //
 
+#define MIXPANEL_TOKEN @"f2f7c8d0d12bd422fdc9b1ef6d6ab0b2"
+
 #import "AppDelegate.h"
+
+#import <Crashlytics/Crashlytics.h>
+#import "Mixpanel.h"
+
 #import "Calculator.h"
 #import "CalculatorViewController.h"
 
@@ -21,6 +27,24 @@ Calculator *calculator;
     
     CalculatorViewController *defaultView = (CalculatorViewController *)self.window.rootViewController;
     defaultView.calculator = calculator;
+    
+    // Crashlytics
+    [Crashlytics startWithAPIKey:@"d8e4a998430741c25fc8939d85d1dee852ab2fb9"];
+    
+    // Initialize the library with your
+    // Mixpanel project token, MIXPANEL_TOKEN
+    [Mixpanel sharedInstanceWithToken:MIXPANEL_TOKEN];
+    
+    // Later, you can get your instance with
+    Mixpanel *mixpanel = [Mixpanel sharedInstance];
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
+    [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"hh:mm a" options:0 locale:[NSLocale currentLocale]]];
+    
+    [mixpanel track:@"Test" properties:@{
+                                                  @"Opened": [dateFormatter stringFromDate:[NSDate date]],
+                                                  @"Plan": @"Free"
+                                                  }];
     
     return YES;
 }
