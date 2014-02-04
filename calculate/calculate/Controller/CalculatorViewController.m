@@ -22,11 +22,15 @@
 - (void)initLayout;
 - (void)loadVerticalLayout;
 - (void)loadHorizontalLayout;
-// Work
+// Calculator
 - (void)clearResult;
 - (void)clearResult: (BOOL)new;
 - (BOOL)isResultEmpty;
+- (void)addToResult:(NSString*)value;
+- (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd;
+- (void)removeLast;
 - (BOOL)hasNumber;
+- (void)checkDecimals;
 - (void)prepareNewNumber;
 - (void)selectOperation:(NSString*)op;
 // Events
@@ -53,8 +57,7 @@
 #pragma mark - Implementation
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
@@ -63,8 +66,7 @@
     return self;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     // Config
     [self configure];
@@ -85,14 +87,12 @@
     return UIStatusBarStyleDefault;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)didOrientationDeviceChanged
-{
+- (void)didOrientationDeviceChanged {
     UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
     if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight)
     {
@@ -116,8 +116,7 @@
     }
 }
 
-- (void)configure
-{
+- (void)configure {
     // Configuration
     if (Feature005_ViewBill)
     {
@@ -131,8 +130,7 @@
     }
 }
 
-- (void)reset
-{
+- (void)reset {
     lastOperator = nil;
     lastExpr = nil;
     // Init calculator
@@ -147,8 +145,7 @@
     [self clearResult];
 }
 
-- (void)setEvents
-{
+- (void)setEvents {
     // Clearing history
     calculator.eventBeforeClear = ^(NSObject* sender)
     {
@@ -202,8 +199,7 @@
     return result;
 }
 
-- (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd
-{
+- (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd {
     if (startCountingDecimals && countDecimals == DECIMALS)
         return;
     
@@ -228,7 +224,31 @@
         return NO;
     else
         return YES;
-    
+}
+
+- (void)removeLast {
+    NSString* aux = self.resultLabel.text;
+    if ([aux length] > 0)
+    {
+        aux = [aux substringToIndex:[aux length] - 1];
+        // Decrement decimals added
+        if (startCountingDecimals)
+            countDecimals--;
+    }
+    self.resultLabel.text = aux;
+}
+
+- (void)checkDecimals {
+    if ([self hasNumber] == NO) {
+        startCountingDecimals = NO;
+        countDecimals = 0;
+    }
+    else if (startCountingDecimals) {
+        NSUInteger aux = [self.resultLabel.text rangeOfString:calculator.format.decimalSeparator].location;
+        if (aux != NSNotFound) {
+            countDecimals = self.resultLabel.text.length - 1 - aux;
+        }
+    }
 }
 
 - (BOOL)isResultEmpty {
@@ -295,21 +315,26 @@
 }
 
 - (IBAction)togglePosNegButtonClick:(id)sender {
-    if ([self isResultEmpty])
+    if ([self hasNumber] == NO)
         return;
     // Oposite number
     double r = [self getResult] * -1;
     // Put on screen
     self.resultLabel.text = [calculator.format stringFromNumber:[NSDecimalNumber numberWithDouble:r]];
+    // Correct the decimals
+    [self checkDecimals];
 }
 
 - (IBAction)percentButtonClick:(id)sender {
-    if ([self isResultEmpty])
+    if ([self hasNumber] == NO)
         return;
     // Oposite number
     double r = [self getResult] / 100;
     // Put on screen
     self.resultLabel.text = [calculator.format stringFromNumber:[NSDecimalNumber numberWithDouble:r]];
+    // Correct the decimals
+    startCountingDecimals = YES;
+    [self checkDecimals];
 }
 
 - (IBAction)divisionButtonClick:(id)sender {
