@@ -17,109 +17,97 @@
     // Private variables
 }
 
-- (id)init
-{
+- (id)init {
     return [self initWithNumber:0];
 }
 
-- (id)initWithValue: (double)value
-{
+- (id)initWithValue: (double)value {
     // Designated
-    if ((self = [super init]))
-    {
+    if ((self = [super init])) {
         self.numerator = value;
         self.denominator = 1;
     }
     return self;
 }
 
-- (id)initWithNumber: (NSNumber*)numerator
-{
+- (id)initWithNumber: (NSNumber*)numerator {
     return [self initWithValue:numerator.doubleValue];
 }
 
-+ (Fraction*)fractionWithValue: (double)value
-{
+- (id)initWithFraction: (Fraction*)fraction {
+    Fraction* aux = [self initWithValue:fraction.numerator];
+    aux.denominator = fraction.denominator;
+    return aux;
+}
+
++ (Fraction*)fractionWithValue: (double)value {
     return [[Fraction alloc] initWithValue:value];
 }
 
-- (NSString*)getAsString
-{
+- (Fraction*)getCopy {
+    return [[Fraction alloc] initWithFraction:self];
+}
+
+- (NSString*)getAsString {
     return [NSString stringWithFormat:@"%f/%f",self.numerator,self.denominator];
 }
 
-- (double)getAsDouble
-{
+- (double)getAsDouble {
     return self.numerator / self.denominator;
 }
 
-- (void)addWith: (Fraction*)value
-{
-    if (self.denominator == value.denominator)
-    {
+- (void)addWith: (Fraction*)value {
+    if (self.denominator == value.denominator) {
         self.numerator += value.numerator;
     }
-    else
-    {
+    else {
         // Put in the same denominator, add both and reduce
         
         [self reduce];
     }
 }
 
-- (void)subtractWith: (Fraction*)value
-{
-    if (self.denominator == value.denominator)
-    {
+- (void)subtractWith: (Fraction*)value {
+    if (self.denominator == value.denominator) {
         self.numerator -= value.numerator;
     }
-    else
-    {
+    else {
         // Put in the same denominator, add both and reduce
 
         [self reduce];
     }
 }
 
-- (void)multiplyWith: (Fraction*)value
-{
+- (void)multiplyWith: (Fraction*)value {
     self.numerator *= value.numerator;
     self.denominator *= value.denominator;
 }
 
-- (void)divideWith: (Fraction*)value
-{
+- (void)divideWith: (Fraction*)value {
     self.numerator *= value.denominator;
     self.denominator *= value.numerator;
 }
 
-- (void)perform: (Operator*)operand With: (Fraction*)value
-{
-    /**/ if ([operand.type isEqualToString:@"+"])
-    {
+- (void)perform: (Operator*)operand With: (Fraction*)value {
+    /**/ if ([operand.type isEqualToString:@"+"]) {
         [self addWith:value];
     }
-    else if ([operand.type isEqualToString:@"-"])
-    {
+    else if ([operand.type isEqualToString:@"-"]) {
         [self subtractWith:value];
     }
-    else if ([operand.type isEqualToString:@"*"])
-    {
+    else if ([operand.type isEqualToString:@"*"]) {
         [self multiplyWith:value];
     }
-    else if ([operand.type isEqualToString:@"/"])
-    {
+    else if ([operand.type isEqualToString:@"/"]) {
         [self divideWith:value];
     }
 }
 
-- (int)getGreatestCommonDivisorWithNum:(int)n andDen:(int)d
-{
+- (int)getGreatestCommonDivisorWithNum:(int)n andDen:(int)d {
 	int aux;
 	n = abs(n);
 	d = abs(d);
-	while (n > 0)
-    {
+	while (n > 0) {
 		aux = n;
 		n = d % n;
 		d = aux;
@@ -127,8 +115,7 @@
 	return d;
 }
 
-- (void)reduce
-{
+- (void)reduce {
 	int gcd = [self getGreatestCommonDivisorWithNum:self.numerator andDen:self.denominator];
 	self.numerator /= gcd;
 	self.denominator /= gcd;

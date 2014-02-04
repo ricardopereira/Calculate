@@ -19,8 +19,11 @@
 - (id)init;
 - (id)initWithValue: (double)value;
 - (id)initWithNumber: (NSNumber*)numerator;
+- (id)initWithFraction: (Fraction*)fraction;
 
 + (Fraction*)fractionWithValue: (double)value;
+
+- (Fraction*)getCopy;
 
 - (void)addWith: (Fraction*)value;
 - (void)subtractWith: (Fraction*)value;

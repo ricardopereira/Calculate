@@ -12,16 +12,13 @@
 // Private properties and methods
 @end
 
-@implementation Expression
-{
+@implementation Expression {
     // Private variables
     NSMutableArray *calculus;
 }
 
-- (id)init
-{
-    if (self = [super init])
-    {
+- (id)init {
+    if (self = [super init]) {
         calculus = [[NSMutableArray alloc] init];
         return self;
     }
@@ -29,20 +26,33 @@
         return nil;
 }
 
-- (void)addFraction: (Fraction*)fraction
-{
+- (void)addFraction: (Fraction*)fraction {
     if (!fraction) return;
     [calculus addObject:fraction];
 }
 
-- (void)addOperator: (Operator*)operand
-{
+- (void)addLastFraction {
+    if ([self isEmpty]) return;
+    // Check if expression is valid
+    [self validate];
+    // Add a copy of the last number
+    [calculus addObject:(Fraction*)[calculus lastObject]];
+}
+
+- (void)validate {
+    if ([self isEmpty]) return;
+    // Check if has a operator on last cell of calculus
+    if ([self isLastOperator]) {
+        [calculus removeLastObject];
+    }
+}
+
+- (void)addOperator: (Operator*)operand {
     if (!operand) return;
-    if (calculus.count == 0) return;
+    if ([self isEmpty]) return;
     
     // Check the last object: Operator
-    if ([[calculus lastObject] isKindOfClass:[Operator class]])
-    {
+    if ([[calculus lastObject] isKindOfClass:[Operator class]]) {
         // ?
         ((Operator*)[calculus lastObject]).type = operand.type;
     }
@@ -50,24 +60,20 @@
         [calculus addObject:operand];
 }
 
-- (void)addOperatorWithType: (NSString*)value
-{
+- (void)addOperatorWithType: (NSString*)value {
     [self addOperator:[Operator operatorWithType:value]];
 }
 
-- (void)clear
-{
+- (void)clear {
     [calculus removeAllObjects];
 }
 
-- (BOOL)isEmpty
-{
+- (BOOL)isEmpty {
     return calculus.count == 0;
 }
 
 - (BOOL)isLastOperator {
-    if ([[calculus lastObject] isKindOfClass:[Operator class]])
-    {
+    if ([[calculus lastObject] isKindOfClass:[Operator class]]) {
         return YES;
     }
     else
@@ -75,35 +81,31 @@
 }
 
 - (BOOL)isLastNumber {
-    if ([[calculus lastObject] isKindOfClass:[Fraction class]])
-    {
+    if ([[calculus lastObject] isKindOfClass:[Fraction class]]) {
         return YES;
     }
     else
         return NO;
 }
 
-- (double)calculate
-{
+- (double)calculate {
     Fraction* f = [Fraction fractionWithValue:0];
     Operator* op = nil;
+
+    [self validate];
     
     // Calculate the complete expression
-    for (id item in calculus)
-    {
-        if (op != nil)
-        {
+    for (id item in calculus) {
+        if (op != nil) {
             [f perform:op With:(Fraction*)item];
             // Force getting the next operand
             op = nil;
         }
-        else if ([item isKindOfClass:[Fraction class]])
-        {
+        else if ([item isKindOfClass:[Fraction class]]) {
             // First fraction / First element
             [f addWith:(Fraction*)item];
         }
-        else if ([item isKindOfClass:[Operator class]])
-        {
+        else if ([item isKindOfClass:[Operator class]]) {
             // Operator to use on next
             op = (Operator*)item;
         }
