@@ -65,6 +65,24 @@
     return calculus.count == 0;
 }
 
+- (BOOL)isLastOperator {
+    if ([[calculus lastObject] isKindOfClass:[Operator class]])
+    {
+        return YES;
+    }
+    else
+        return NO;
+}
+
+- (BOOL)isLastNumber {
+    if ([[calculus lastObject] isKindOfClass:[Fraction class]])
+    {
+        return YES;
+    }
+    else
+        return NO;
+}
+
 - (double)calculate
 {
     Fraction* f = [Fraction fractionWithValue:0];

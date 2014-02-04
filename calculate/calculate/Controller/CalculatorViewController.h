@@ -20,6 +20,7 @@
 // Layout
 @property (strong, nonatomic) IBOutlet UIView *viewBill;
 
+@property (strong, nonatomic) IBOutlet UIView *resultView;
 @property (strong, nonatomic) IBOutlet UILabel *resultLabel;
 
 @property (strong, nonatomic) IBOutlet UIButton *clearButton;

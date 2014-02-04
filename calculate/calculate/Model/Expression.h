@@ -26,6 +26,8 @@
 
 - (void)clear;
 - (BOOL)isEmpty;
+- (BOOL)isLastOperator;
+- (BOOL)isLastNumber;
 
 - (double)calculate;
 
