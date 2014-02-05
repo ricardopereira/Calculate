@@ -15,8 +15,6 @@
 @interface CalculatorViewController ()
 
 // Private properties and methods
-- (void)configure;
-- (void)reset;
 - (void)setEvents;
 // Layout
 - (void)initLayout;
@@ -29,7 +27,6 @@
 - (void)addToResult:(NSString*)value;
 - (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd;
 - (void)removeLast;
-- (BOOL)hasNumber;
 - (void)checkDecimals;
 - (void)prepareNewNumber;
 - (void)selectOperation:(NSString*)op;
@@ -42,7 +39,7 @@
 @implementation CalculatorViewController
 {
     Expression *expr, *lastExpr;
-    int countDecimals;
+    unsigned int countDecimals;
     BOOL startCountingDecimals;
     BOOL newNumber;
     
@@ -80,6 +77,10 @@
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(didOrientationDeviceChanged) name:UIDeviceOrientationDidChangeNotification object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -220,10 +221,15 @@
 }
 
 - (BOOL)hasNumber {
-    if ([self getResult] == ZERO)
+    double r = [self getResult];
+    if (r == ZERO)
         return NO;
     else
         return YES;
+}
+
+- (BOOL)isZero {
+    return ![self hasNumber];
 }
 
 - (void)removeLast {
@@ -246,7 +252,7 @@
     else if (startCountingDecimals) {
         NSUInteger aux = [self.resultLabel.text rangeOfString:calculator.format.decimalSeparator].location;
         if (aux != NSNotFound) {
-            countDecimals = self.resultLabel.text.length - 1 - aux;
+            countDecimals = self.resultLabel.text.length - aux;
         }
     }
 }
@@ -255,6 +261,15 @@
     return [self.resultLabel.text isEqualToString:@"0"];
 }
 
+- (void)selectOperation:(NSString*)op {
+    [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
+    [expr addOperator:[Operator operatorWithType:op]];
+    
+    [self prepareNewNumber];
+}
+
+#pragma mark - Events
+
 - (void)onBeforeAddOperator: (id)sender {
     lastExpr = nil;
 }
@@ -262,6 +277,85 @@
 - (void)onAfterAddOperator: (id)sender {
     
 }
+
+#pragma mark - Touch buttons
+
+- (void)touchClear {
+    [self clearButtonClick:self.clearButton];
+}
+
+- (void)touchBackspace {
+    [self percentButtonClick:self.percentButton];
+}
+
+- (void)touchDivision {
+    [self divisionButtonClick:self.divisionButton];
+}
+
+- (void)touchMultiply {
+    [self multiplyButtonClick:self.multiplyButton];
+}
+
+- (void)touchSubtract {
+    [self subtractButtonClick:self.subtractButton];
+}
+
+- (void)touchAdd {
+    [self addButtonClick:self.addButton];
+}
+
+- (void)touchTotal {
+    [self totalButtonClick:self.totalButton];
+}
+
+- (void)touchDot {
+    [self dotButtonClick:self.dotButton];
+}
+
+- (void)touchTogglePosNeg {
+    [self togglePosNegButtonClick:self.togglePosNegButton];
+}
+
+- (void)touchOne {
+    [self oneButtonClick:self.buttonOne];
+}
+
+- (void)touchTwo {
+    [self twoButtonClick:self.buttonTwo];
+}
+
+- (void)touchThree {
+    [self threeButtonClick:self.buttonThree];
+}
+
+- (void)touchFour {
+    [self fourButtonClick:self.buttonFour];
+}
+
+- (void)touchFive {
+    [self fiveButtonClick:self.buttonFive];
+}
+
+- (void)touchSix {
+    [self sixButtonClick:self.buttonSix];
+}
+
+- (void)touchSeven {
+    [self sevenButtonClick:self.buttonSeven];
+}
+
+- (void)touchEight {
+    [self eightButtonClick:self.buttonEight];
+}
+
+- (void)touchNine {
+    [self nineButtonClick:self.buttonNine];
+}
+- (void)touchZero {
+    [self zeroButtonClick:self.buttonZero];
+}
+
+#pragma mark - View Events
 
 - (IBAction)dotButtonClick:(id)sender {
     if ([self.resultLabel.text rangeOfString:calculator.format.decimalSeparator].location == NSNotFound) {
@@ -383,13 +477,6 @@
     [self selectOperation:@"+"];
     
     [self onAfterAddOperator: sender];
-}
-
-- (void)selectOperation:(NSString*)op {
-    [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
-    [expr addOperator:[Operator operatorWithType:op]];
-
-    [self prepareNewNumber];
 }
 
 - (IBAction)totalButtonClick:(id)sender {

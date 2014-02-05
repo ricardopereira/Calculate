@@ -42,9 +42,9 @@ Calculator *calculator;
     [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"hh:mm a" options:0 locale:[NSLocale currentLocale]]];
     
     [mixpanel track:@"Test" properties:@{
-                                                  @"Opened": [dateFormatter stringFromDate:[NSDate date]],
-                                                  @"Plan": @"Free"
-                                                  }];
+        @"Opened": [dateFormatter stringFromDate:[NSDate date]],
+        @"Plan": @"Free"
+    }];
     
     return YES;
 }

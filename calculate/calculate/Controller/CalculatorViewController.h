@@ -14,7 +14,37 @@
     // Public variables
 }
 
-// Public properties and methods
+// Public methods
+- (void)configure;
+- (void)reset;
+
+- (BOOL)hasNumber;
+- (BOOL)isZero;
+- (double)getResult;
+
+// Touch buttons
+- (void)touchClear;
+- (void)touchBackspace;
+- (void)touchDivision;
+- (void)touchMultiply;
+- (void)touchSubtract;
+- (void)touchAdd;
+- (void)touchTotal;
+- (void)touchDot;
+- (void)touchTogglePosNeg;
+
+- (void)touchOne;
+- (void)touchTwo;
+- (void)touchThree;
+- (void)touchFour;
+- (void)touchFive;
+- (void)touchSix;
+- (void)touchSeven;
+- (void)touchEight;
+- (void)touchNine;
+- (void)touchZero;
+
+// Public properties
 @property (strong, nonatomic) Calculator *calculator;
 
 // Layout
