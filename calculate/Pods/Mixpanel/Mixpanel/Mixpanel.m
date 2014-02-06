@@ -8,7 +8,6 @@
 #include <sys/socket.h>
 #include <sys/sysctl.h>
 
-#import <AdSupport/ASIdentifierManager.h>
 #import <CommonCrypto/CommonDigest.h>
 #import <CoreTelephony/CTCarrier.h>
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
@@ -22,7 +21,7 @@
 #import "NSData+MPBase64.h"
 #import "UIView+MPSnapshotImage.h"
 
-#define VERSION @"2.3.0"
+#define VERSION @"2.3.1"
 
 #ifdef MIXPANEL_LOG
 #define MixpanelLog(...) NSLog(__VA_ARGS__)
@@ -239,6 +238,22 @@ static Mixpanel *sharedInstance = nil;
     return results;
 }
 
+- (NSString *)IFA
+{
+    NSString *ifa = nil;
+#ifndef MIXPANEL_NO_IFA
+    Class ASIdentifierManagerClass = NSClassFromString(@"ASIdentifierManager");
+    if (ASIdentifierManagerClass) {
+        SEL sharedManagerSelector = NSSelectorFromString(@"sharedManager");
+        id sharedManager = ((id (*)(id, SEL))[ASIdentifierManagerClass methodForSelector:sharedManagerSelector])(ASIdentifierManagerClass, sharedManagerSelector);
+        SEL advertisingIdentifierSelector = NSSelectorFromString(@"advertisingIdentifier");
+        NSUUID *uuid = ((NSUUID* (*)(id, SEL))[sharedManager methodForSelector:advertisingIdentifierSelector])(sharedManager, advertisingIdentifierSelector);
+        ifa = [uuid UUIDString];
+    }
+#endif
+    return ifa;
+}
+
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
 - (void)setCurrentRadio
 {
@@ -281,11 +296,7 @@ static Mixpanel *sharedInstance = nil;
     if (carrier.carrierName.length) {
         [p setValue:carrier.carrierName forKey:@"$carrier"];
     }
-#ifndef MIXPANEL_NO_IFA
-    if (NSClassFromString(@"ASIdentifierManager")) {
-        [p setValue:[[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString] forKey:@"$ios_ifa"];
-    }
-#endif
+    [p setValue:[self IFA] forKey:@"$ios_ifa"];
     return p;
 }
 
@@ -394,17 +405,11 @@ static Mixpanel *sharedInstance = nil;
 
 - (NSString *)defaultDistinctId
 {
-    NSString *distinctId = nil;
-#ifdef MIXPANEL_NO_IFA
-    if (NSClassFromString(@"UIDevice")) {
+    NSString *distinctId = [self IFA];
+
+    if (!distinctId && NSClassFromString(@"UIDevice")) {
         distinctId = [[UIDevice currentDevice].identifierForVendor UUIDString];
     }
-#else
-    if (NSClassFromString(@"ASIdentifierManager")) {
-        distinctId = [[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString];
-    }
-#endif
-
     if (!distinctId) {
         NSLog(@"%@ error getting device identifier: falling back to uuid", self);
         distinctId = [[NSUUID UUID] UUIDString];
@@ -804,10 +809,12 @@ static Mixpanel *sharedInstance = nil;
         NSLog(@"%@ unable to unarchive events data, starting fresh", self);
         self.eventsQueue = nil;
     }
-    NSError *error;
-    BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
-    if (!removed) {
-        NSLog(@"%@ unable to remove archived events file at %@ - %@", self, filePath, error);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSError *error;
+        BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+        if (!removed) {
+            NSLog(@"%@ unable to remove archived events file at %@ - %@", self, filePath, error);
+        }
     }
     if (!self.eventsQueue) {
         self.eventsQueue = [NSMutableArray array];
@@ -825,10 +832,12 @@ static Mixpanel *sharedInstance = nil;
         NSLog(@"%@ unable to unarchive people data, starting fresh", self);
         self.peopleQueue = nil;
     }
-    NSError *error;
-    BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
-    if (!removed) {
-        NSLog(@"%@ unable to remove archived people file at %@ - %@", self, filePath, error);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSError *error;
+        BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+        if (!removed) {
+            NSLog(@"%@ unable to remove archived people file at %@ - %@", self, filePath, error);
+        }
     }
     if (!self.peopleQueue) {
         self.peopleQueue = [NSMutableArray array];
@@ -846,10 +855,12 @@ static Mixpanel *sharedInstance = nil;
     @catch (NSException *exception) {
         NSLog(@"%@ unable to unarchive properties data, starting fresh", self);
     }
-    NSError *error;
-    BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
-    if (!removed) {
-        NSLog(@"%@ unable to remove archived properties file at %@ - %@", self, filePath, error);
+    if ([[NSFileManager defaultManager] fileExistsAtPath:filePath]) {
+        NSError *error;
+        BOOL removed = [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+        if (!removed) {
+            NSLog(@"%@ unable to remove archived properties file at %@ - %@", self, filePath, error);
+        }
     }
     if (properties) {
         self.distinctId = properties[@"distinctId"] ? properties[@"distinctId"] : [self defaultDistinctId];
@@ -957,7 +968,7 @@ static Mixpanel *sharedInstance = nil;
         if (!_surveys || !_notifications) {
             MixpanelDebug(@"%@ decide cache not found, starting network request", self);
 
-            NSString *params = [NSString stringWithFormat:@"version=1&lib=iphone&token=%@&distinct_id=%@", self.apiToken, MPURLEncode(self.distinctId)];
+            NSString *params = [NSString stringWithFormat:@"version=1&lib=iphone&token=%@&distinct_id=%@", self.apiToken, MPURLEncode(self.people.distinctId)];
             NSURL *URL = [NSURL URLWithString:[self.serverURL stringByAppendingString:[NSString stringWithFormat:@"/decide?%@", params]]];
             NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
             [request setValue:@"gzip" forHTTPHeaderField:@"Accept-Encoding"];
@@ -1362,16 +1373,12 @@ static Mixpanel *sharedInstance = nil;
     __strong Mixpanel *strongMixpanel = _mixpanel;
     if (strongMixpanel) {
         [p setValue:[strongMixpanel deviceModel] forKey:@"$ios_device_model"];
+        [p setValue:[strongMixpanel IFA] forKey:@"$ios_ifa"];
     }
     [p setValue:[device systemVersion] forKey:@"$ios_version"];
     [p setValue:VERSION forKey:@"$ios_lib_version"];
     [p setValue:[[NSBundle mainBundle] infoDictionary][@"CFBundleVersion"] forKey:@"$ios_app_version"];
     [p setValue:[[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"] forKey:@"$ios_app_release"];
-#ifndef MIXPANEL_NO_IFA
-    if (NSClassFromString(@"ASIdentifierManager")) {
-        [p setValue:[[ASIdentifierManager sharedManager].advertisingIdentifier UUIDString] forKey:@"$ios_ifa"];
-    }
-#endif
     return [NSDictionary dictionaryWithDictionary:p];
 }
 

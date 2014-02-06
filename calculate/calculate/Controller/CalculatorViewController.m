@@ -420,15 +420,11 @@
 }
 
 - (IBAction)percentButtonClick:(id)sender {
+    // ToDo
     if ([self hasNumber] == NO)
         return;
-    // Oposite number
-    double r = [self getResult] / 100;
-    // Put on screen
-    self.resultLabel.text = [calculator.format stringFromNumber:[NSDecimalNumber numberWithDouble:r]];
-    // Correct the decimals
-    startCountingDecimals = YES;
-    [self checkDecimals];
+    
+    [self removeLast];
 }
 
 - (IBAction)divisionButtonClick:(id)sender {
