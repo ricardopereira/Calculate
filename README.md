@@ -1,10 +1,8 @@
-ios.calculate
-=============
+Calculate
+============
+###### A personal calculator, version 1
 
-Calculate - A personal calculator
-Version 1
-
-![Image 1](https://dl.dropboxusercontent.com/u/11377305/websites/calculate/app-screen.png)
+![Image 1](https://dl.dropboxusercontent.com/u/11377305/websites/calculate/app-preview.png)
 
 Requirements
 ============
@@ -14,4 +12,4 @@ Requirements
 Contact
 ============
 
-You can reach me on my twitter [@Xsody](https://twitter.com/ricardopereiraw).
+You can reach me on my twitter [@ricardopereiraw](https://twitter.com/ricardopereiraw).
