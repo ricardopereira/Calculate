@@ -252,7 +252,7 @@
     else if (startCountingDecimals) {
         NSUInteger aux = [self.resultLabel.text rangeOfString:calculator.format.decimalSeparator].location;
         if (aux != NSNotFound) {
-            countDecimals = self.resultLabel.text.length - aux;
+            countDecimals = (unsigned int)(self.resultLabel.text.length - 1 - aux);
         }
     }
 }
