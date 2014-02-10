@@ -60,7 +60,7 @@
         [calculus addObject:operand];
 }
 
-- (void)addOperatorWithType: (NSString*)value {
+- (void)addOperatorWithType: (char)value {
     [self addOperator:[Operator operatorWithType:value]];
 }
 
@@ -97,7 +97,14 @@
     // Calculate the complete expression
     for (id item in calculus) {
         if (op != nil) {
-            [f perform:op With:(Fraction*)item];
+            // Check Division by Zero
+            if ([op isDivision] && [(Fraction*)item numeratorIsZero]) {
+                // Cancel
+                [f reset];
+                break;
+            }
+            else
+                [f perform:op With:(Fraction*)item];
             // Force getting the next operand
             op = nil;
         }

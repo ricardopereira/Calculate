@@ -20,22 +20,35 @@
 - (id)init
 {
     // Default
-    return [self initWithType:@"+"];
+    return [self initWithType:'+'];
 }
 
-- (id)initWithType: (NSString*)value
+- (id)initWithType: (char)value
 {
     if ((self = [super init]))
-    {
-        // ?
-        self.type = [NSString stringWithString:value];
-    }
+        self.type = value;
     return self;
 }
 
-+ (id)operatorWithType: (NSString*) value
++ (id)operatorWithType: (char)value
 {
     return [[Operator alloc] initWithType:value];
+}
+
+- (BOOL)isAdd {
+    return _type == '+';
+}
+
+- (BOOL)isSubtract {
+    return _type == '-';
+}
+
+- (BOOL)isMultiply {
+    return _type == '*';
+}
+
+- (BOOL)isDivision {
+    return _type == '/';
 }
 
 @end

@@ -31,7 +31,10 @@
 - (void)divideWith: (Fraction*)value;
 - (void)perform: (Operator*)operand With: (Fraction*)value;
 
+- (void)reset;
 - (void)reduce;
+- (BOOL)numeratorIsZero;
+- (BOOL)denominatorIsZero;
 
 - (double)getAsDouble;
 - (NSString*)getAsString;

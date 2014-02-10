@@ -36,7 +36,10 @@
 
 - (id)initWithFraction: (Fraction*)fraction {
     Fraction* aux = [self initWithValue:fraction.numerator];
-    aux.denominator = fraction.denominator;
+    if ([fraction numeratorIsZero] && [fraction denominatorIsZero])
+        aux.denominator = 1;
+    else
+        aux.denominator = fraction.denominator;
     return aux;
 }
 
@@ -53,7 +56,11 @@
 }
 
 - (double)getAsDouble {
-    return self.numerator / self.denominator;
+    // Check Division by Zero
+    if ([self denominatorIsZero])
+        return 0;
+    else
+        return self.numerator / self.denominator;
 }
 
 - (void)addWith: (Fraction*)value {
@@ -89,16 +96,16 @@
 }
 
 - (void)perform: (Operator*)operand With: (Fraction*)value {
-    /**/ if ([operand.type isEqualToString:@"+"]) {
+    /**/ if ([operand isAdd]) {
         [self addWith:value];
     }
-    else if ([operand.type isEqualToString:@"-"]) {
+    else if ([operand isSubtract]) {
         [self subtractWith:value];
     }
-    else if ([operand.type isEqualToString:@"*"]) {
+    else if ([operand isMultiply]) {
         [self multiplyWith:value];
     }
-    else if ([operand.type isEqualToString:@"/"]) {
+    else if ([operand isDivision]) {
         [self divideWith:value];
     }
 }
@@ -119,6 +126,19 @@
 	int gcd = [self getGreatestCommonDivisorWithNum:self.numerator andDen:self.denominator];
 	self.numerator /= gcd;
 	self.denominator /= gcd;
+}
+
+- (void)reset {
+    _numerator = 0;
+    _denominator = 1;
+}
+
+- (BOOL)numeratorIsZero {
+    return _numerator == ZERO;
+}
+
+- (BOOL)denominatorIsZero {
+    return _denominator == ZERO;
 }
 
 @end

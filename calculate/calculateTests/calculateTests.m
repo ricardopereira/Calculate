@@ -421,4 +421,76 @@
     XCTAssertTrue([self.vc getResult] == 6);
 }
 
+- (void)testMultiplyByZero {
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchMultiply];
+    
+    [self.vc touchZero];
+    
+    [self.vc touchTotal];
+    
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"0"]);
+    XCTAssertTrue([self.vc isZero]);
+}
+
+- (void)testMultiplyByZeroMultiple {
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchMultiply];
+    
+    [self.vc touchZero];
+    
+    [self.vc touchAdd];
+    
+    [self.vc touchThree];
+    
+    [self.vc touchTotal];
+    
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"3"]);
+    XCTAssertTrue([self.vc getResult] == 3);
+}
+
+- (void)testDivisionByZero {
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchDivision];
+    
+    [self.vc touchZero];
+    
+    [self.vc touchTotal];
+    
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"0"]);
+    XCTAssertTrue([self.vc isZero]);
+}
+
+- (void)testDivisionByZeroMultiple {
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchDivision];
+    
+    [self.vc touchZero];
+    
+    [self.vc touchAdd];
+    
+    [self.vc touchThree];
+    
+    [self.vc touchTotal];
+    
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"0"]);
+    XCTAssertTrue([self.vc isZero]);
+}
+
 @end

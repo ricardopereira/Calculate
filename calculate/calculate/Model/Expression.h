@@ -22,7 +22,7 @@
 
 - (void)addFraction: (Fraction*)fraction;
 - (void)addOperator: (Operator*)operand;
-- (void)addOperatorWithType: (NSString*)value;
+- (void)addOperatorWithType: (char)value;
 - (void)addLastFraction;
 
 - (void)validate;

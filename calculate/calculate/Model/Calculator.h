@@ -11,7 +11,6 @@
 #import "Expression.h"
 
 #define DECIMALS 12
-#define ZERO .000000000000f
 
 @interface Calculator : Common
 {

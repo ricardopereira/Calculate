@@ -24,15 +24,15 @@
 - (void)clearResult;
 - (void)clearResult: (BOOL)new;
 - (BOOL)isResultEmpty;
-- (void)addToResult:(NSString*)value;
-- (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd;
+- (void)addToResult: (NSString*)value;
+- (void)addToResult: (NSString*)value WithForce:(BOOL)forceAdd;
 - (void)removeLast;
 - (void)checkDecimals;
 - (void)prepareNewNumber;
-- (void)selectOperation:(NSString*)op;
+- (void)selectOperation: (char)op;
 // Events
-- (void)onBeforeAddOperator: (id)sender;
-- (void)onAfterAddOperator: (id)sender;
+- (BOOL)onBeforeAddOperator: (id)sender;
+- (BOOL)onAfterAddOperator: (id)sender;
 
 @end
 
@@ -261,7 +261,7 @@
     return [self.resultLabel.text isEqualToString:@"0"];
 }
 
-- (void)selectOperation:(NSString*)op {
+- (void)selectOperation:(char)op {
     [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
     [expr addOperator:[Operator operatorWithType:op]];
     
@@ -270,12 +270,14 @@
 
 #pragma mark - Events
 
-- (void)onBeforeAddOperator: (id)sender {
+- (BOOL)onBeforeAddOperator: (id)sender {
     lastExpr = nil;
+    // Not valid
+    return (lastOperator == sender);
 }
 
-- (void)onAfterAddOperator: (id)sender {
-    
+- (BOOL)onAfterAddOperator: (id)sender {
+    return YES;
 }
 
 #pragma mark - Touch buttons
@@ -428,49 +430,41 @@
 }
 
 - (IBAction)divisionButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
+    if ([self onBeforeAddOperator: sender])
         return;
     
     [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"/"];
+    [self selectOperation:'/'];
     
     [self onAfterAddOperator: sender];
 }
 
 - (IBAction)multiplyButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
+    if ([self onBeforeAddOperator: sender])
         return;
 
     [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"*"];
+    [self selectOperation:'*'];
     
     [self onAfterAddOperator: sender];
 }
 
 - (IBAction)subtractButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
+    if ([self onBeforeAddOperator: sender])
         return;
 
     [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"-"];
+    [self selectOperation:'-'];
     
     [self onAfterAddOperator: sender];
 }
 
 - (IBAction)addButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
+    if ([self onBeforeAddOperator: sender])
         return;
 
     [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"+"];
+    [self selectOperation:'+'];
     
     [self onAfterAddOperator: sender];
 }
