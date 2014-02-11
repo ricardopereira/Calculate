@@ -9,6 +9,9 @@
 #ifndef Calculate_AppConfig_h
 #define Calculate_AppConfig_h
 
+#define Feature004_MixpanelRecords 0
 #define Feature005_ViewBill 0
+#define Feature006_ToastMessages 1
+#define Feature007_ResultLongPressOptions 1
 
 #endif

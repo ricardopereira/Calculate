@@ -33,7 +33,7 @@
 
 - (double)calculate;
 
-// Test
-- (void)createExpressionTest;
+// Events
+@property (nonatomic, copy) void (^eventDivisionByZero)(void);
 
 @end

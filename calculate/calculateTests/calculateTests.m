@@ -493,4 +493,42 @@
     XCTAssertTrue([self.vc isZero]);
 }
 
+- (void)testSameDenominator {
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchDivision];
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchAdd];
+    
+    [self.vc touchThree];
+    
+    [self.vc touchTotal];
+    
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"4"]);
+    XCTAssertTrue([self.vc getResult] == 4);
+}
+
+- (void)testDoubleOperator {
+    
+    [self.vc touchTwo];
+    
+    [self.vc touchDivision];
+    
+    [self.vc touchAdd];
+    
+    [self.vc touchThree];
+    
+    [self.vc touchTotal];
+    
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"5"]);
+    XCTAssertTrue([self.vc getResult] == 5);
+}
+
 @end

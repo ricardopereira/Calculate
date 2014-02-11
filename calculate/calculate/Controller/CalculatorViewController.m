@@ -10,6 +10,7 @@
 
 #import <math.h>
 
+#import "TSMessage.h"
 #import "AppConfig.h"
 
 @interface CalculatorViewController ()
@@ -20,19 +21,25 @@
 - (void)initLayout;
 - (void)loadVerticalLayout;
 - (void)loadHorizontalLayout;
+// Actions
+- (IBAction)resultLongPressed:(id)sender;
 // Calculator
 - (void)clearResult;
-- (void)clearResult: (BOOL)new;
+- (void)clearResult:(BOOL)new;
 - (BOOL)isResultEmpty;
-- (void)addToResult: (NSString*)value;
-- (void)addToResult: (NSString*)value WithForce:(BOOL)forceAdd;
+- (void)addToResult:(NSString*)value;
+- (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd;
 - (void)removeLast;
 - (void)checkDecimals;
 - (void)prepareNewNumber;
-- (void)selectOperation: (char)op;
+- (void)selectOperation:(char)op;
 // Events
-- (BOOL)onBeforeAddOperator: (id)sender;
-- (BOOL)onAfterAddOperator: (id)sender;
+- (BOOL)onBeforeAddOperator:(id)sender;
+- (BOOL)onAfterAddOperator:(id)sender;
+
+
+//Properties
+@property (strong, nonatomic) UIPopoverController *activityPopover;
 
 @end
 
@@ -46,6 +53,7 @@
     // Private variables
     UIColor *selectedColor, *defaultColor;
     UIButton *lastOperator;
+    UIDeviceOrientation lastOrientation;
 }
 
 @synthesize calculator;
@@ -54,7 +62,8 @@
 #pragma mark - Implementation
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
@@ -63,7 +72,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Config
     [self configure];
@@ -79,45 +89,79 @@
                                              selector:@selector(didOrientationDeviceChanged) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated
+{
     
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
     // Default notification style
     return UIStatusBarStyleDefault;
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)didOrientationDeviceChanged {
+- (void)didOrientationDeviceChanged
+{
     UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    if (lastOrientation == orientation) return;
+    
     if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight)
     {
         [self loadHorizontalLayout];
         
-        [UIView animateWithDuration:0.3 animations:^{
-            self.viewBill.alpha = 1.0f;
-        }];
-    }
-    else if (orientation == UIDeviceOrientationFaceUp || orientation == UIDeviceOrientationFaceDown)
-    {
+        if (Feature005_ViewBill == 1) {
+            [UIView animateWithDuration:0.3 animations:^{
+                self.viewBill.alpha = 1.0f;
+            }];
+        }
         
+        // Dismiss if popover is visible
+        if (self.activityPopover) {
+            [self.activityPopover dismissPopoverAnimated:YES];
+            self.activityPopover = nil;
+        }
+        lastOrientation = orientation;
     }
-    else
+    else if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown)
     {
         [self loadVerticalLayout];
         
-        [UIView animateWithDuration:0.3 animations:^{
-            self.viewBill.alpha = 0.0f;
-        }];
+        if (Feature005_ViewBill == 1) {
+            [UIView animateWithDuration:0.3 animations:^{
+                self.viewBill.alpha = 0.0f;
+            }];
+        }
+        
+        // Dismiss if popover is visible
+        if (self.activityPopover) {
+            [self.activityPopover dismissPopoverAnimated:YES];
+            self.activityPopover = nil;
+        }
+        lastOrientation = orientation;
     }
 }
 
-- (void)configure {
+- (void)configure
+{
+    // Toast messages
+    if (Feature006_ToastMessages == 1)
+        [TSMessage setDefaultViewController:self];
+    
+    // Result: Long press options
+    if (Feature007_ResultLongPressOptions == 1) {
+        self.resultLabel.userInteractionEnabled = YES;
+        UILongPressGestureRecognizer *resultLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(resultLongPressed:)];
+        resultLongPress.minimumPressDuration = 0.1; //Seconds
+        resultLongPress.numberOfTapsRequired = 0;
+        [self.resultLabel addGestureRecognizer:resultLongPress];
+    }
+    
     // Configuration
     if (Feature005_ViewBill)
     {
@@ -131,7 +175,8 @@
     }
 }
 
-- (void)reset {
+- (void)reset
+{
     lastOperator = nil;
     lastExpr = nil;
     // Init calculator
@@ -146,11 +191,38 @@
     [self clearResult];
 }
 
+- (IBAction)resultLongPressed:(id)sender
+{
+    if ([self isZero]) return;
+    
+    NSArray *itemsToShare = @[NSLocalizedString(@"Total:",nil), self.resultLabel.text];
+    UIActivityViewController *optionsActivity = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
+    optionsActivity.excludedActivityTypes = @[UIActivityTypeAssignToContact];
+    
+    // iPad
+    optionsActivity.completionHandler = ^(NSString *activityType, BOOL completed)
+    {
+        NSLog(@" activityType: %@", activityType);
+        NSLog(@" completed: %i", completed);
+    };
+    
+    if (![self.activityPopover isPopoverVisible]) {
+        self.activityPopover = [[UIPopoverController alloc] initWithContentViewController:optionsActivity];
+        
+        if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+            [self.activityPopover presentPopoverFromRect:[UIScreen mainScreen].bounds inView:self.view permittedArrowDirections:0 animated:YES];
+        else
+            [self.activityPopover presentPopoverFromRect:self.view.bounds inView:self.view permittedArrowDirections:0 animated:YES];
+    }
+    // iPhone
+    //[self presentViewController:optionsActivity animated:YES completion:nil];
+}
+
 - (void)setEvents {
     // Clearing history
     calculator.eventBeforeClear = ^(NSObject* sender)
     {
-        NSLog(@"%@",[(Calculator*)sender getAsString]);
+        NSLog(@"Cleared: %@",[(Calculator*)sender getAsString]);
     };
 }
 
@@ -174,6 +246,14 @@
 - (void)clearResult: (BOOL)new {
     lastExpr = expr;
     expr = [calculator newExpression];
+    // Message - Division by Zero
+    if (Feature006_ToastMessages == 1)
+        expr.eventDivisionByZero = ^{
+            [TSMessage showNotificationWithTitle:NSLocalizedString(@"Error",nil)
+                                        subtitle:NSLocalizedString(@"Division by zero",nil)
+                                            type:TSMessageNotificationTypeError];
+        };
+    
     [self prepareNewNumber];
     [self setDefaultButtonColor];
     if (new) {
@@ -262,10 +342,14 @@
 }
 
 - (void)selectOperation:(char)op {
-    [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
-    [expr addOperator:[Operator operatorWithType:op]];
-    
-    [self prepareNewNumber];
+    if (lastOperator) {
+        [expr addOperator:[Operator operatorWithType:op]];
+    }
+    else {
+        [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
+        [expr addOperator:[Operator operatorWithType:op]];
+        [self prepareNewNumber];
+    }
 }
 
 #pragma mark - Events
@@ -433,8 +517,8 @@
     if ([self onBeforeAddOperator: sender])
         return;
     
-    [self setSelectButtonColor:(UIButton *)sender];
     [self selectOperation:'/'];
+    [self setSelectButtonColor:(UIButton *)sender];
     
     [self onAfterAddOperator: sender];
 }
@@ -443,8 +527,8 @@
     if ([self onBeforeAddOperator: sender])
         return;
 
-    [self setSelectButtonColor:(UIButton *)sender];
     [self selectOperation:'*'];
+    [self setSelectButtonColor:(UIButton *)sender];
     
     [self onAfterAddOperator: sender];
 }
@@ -452,9 +536,9 @@
 - (IBAction)subtractButtonClick:(id)sender {
     if ([self onBeforeAddOperator: sender])
         return;
-
-    [self setSelectButtonColor:(UIButton *)sender];
+    
     [self selectOperation:'-'];
+    [self setSelectButtonColor:(UIButton *)sender];
     
     [self onAfterAddOperator: sender];
 }
@@ -463,13 +547,13 @@
     if ([self onBeforeAddOperator: sender])
         return;
 
-    [self setSelectButtonColor:(UIButton *)sender];
     [self selectOperation:'+'];
+    [self setSelectButtonColor:(UIButton *)sender];
     
     [self onAfterAddOperator: sender];
 }
 
-- (IBAction)totalButtonClick:(id)sender {
+- (IBAction)totalButtonClick:(id)sender {    
     // Check input
     if ([expr isEmpty] && [self hasNumber] == NO)
         return;

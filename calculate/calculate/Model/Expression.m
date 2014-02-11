@@ -53,7 +53,6 @@
     
     // Check the last object: Operator
     if ([[calculus lastObject] isKindOfClass:[Operator class]]) {
-        // ?
         ((Operator*)[calculus lastObject]).type = operand.type;
     }
     else
@@ -101,6 +100,8 @@
             if ([op isDivision] && [(Fraction*)item numeratorIsZero]) {
                 // Cancel
                 [f reset];
+                // Perform event
+                if (self.eventDivisionByZero) self.eventDivisionByZero();
                 break;
             }
             else
@@ -120,9 +121,6 @@
     return [f getAsDouble];
 }
 
-- (void)createExpressionTest
-{
-    
-}
+# pragma mark Events
 
 @end

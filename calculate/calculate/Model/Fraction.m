@@ -65,22 +65,36 @@
 
 - (void)addWith: (Fraction*)value {
     if (self.denominator == value.denominator) {
+        // Add
         self.numerator += value.numerator;
     }
     else {
         // Put in the same denominator, add both and reduce
-        
+        self.numerator *= value.denominator;
+        self.denominator *= value.denominator;
+        value.numerator *= self.denominator;
+        value.denominator *= self.denominator;
+        // Add
+        self.numerator += value.numerator;
+        // Reduce
         [self reduce];
     }
 }
 
 - (void)subtractWith: (Fraction*)value {
     if (self.denominator == value.denominator) {
+        // Subtract
         self.numerator -= value.numerator;
     }
     else {
         // Put in the same denominator, add both and reduce
-
+        self.numerator *= value.denominator;
+        self.denominator *= value.denominator;
+        value.numerator *= self.denominator;
+        value.denominator *= self.denominator;
+        // Subtract
+        self.numerator -= value.numerator;
+        // Reduce
         [self reduce];
     }
 }
