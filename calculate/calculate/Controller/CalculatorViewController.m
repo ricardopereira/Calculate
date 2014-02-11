@@ -246,13 +246,15 @@
 - (void)clearResult: (BOOL)new {
     lastExpr = expr;
     expr = [calculator newExpression];
-    // Message - Division by Zero
-    if (Feature006_ToastMessages == 1)
+    
+    // Message for each expression - Division by Zero
+    if (Feature006_ToastMessages == 1) {
         expr.eventDivisionByZero = ^{
-            [TSMessage showNotificationWithTitle:NSLocalizedString(@"Error",nil)
-                                        subtitle:NSLocalizedString(@"Division by zero",nil)
-                                            type:TSMessageNotificationTypeError];
+            [TSMessage showNotificationWithTitle:NSLocalizedString(@"Failed: Division by zero",nil)
+                                        subtitle:@""
+                                            type:TSMessageNotificationTypeMessage];
         };
+    }
     
     [self prepareNewNumber];
     [self setDefaultButtonColor];
