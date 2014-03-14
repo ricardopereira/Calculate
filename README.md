@@ -7,7 +7,7 @@ Calculate
 Requirements
 ============
 
-* You will need [cocoapods](http://cocoapods.org/) in order to build this project 
+* You will need [cocoapods](http://cocoapods.org/) in order to build this project.
 
 Contact
 ============
