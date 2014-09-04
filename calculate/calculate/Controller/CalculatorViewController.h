@@ -48,20 +48,20 @@
 @property (strong, nonatomic) Calculator *calculator;
 
 // Layout
-@property (strong, nonatomic) IBOutlet UIView *viewBill;
-
 @property (strong, nonatomic) IBOutlet UIView *resultView;
 @property (strong, nonatomic) IBOutlet UILabel *resultLabel;
 
-@property (strong, nonatomic) IBOutlet UIButton *clearButton;
-@property (strong, nonatomic) IBOutlet UIButton *togglePosNegButton;
-@property (strong, nonatomic) IBOutlet UIButton *percentButton;
-@property (strong, nonatomic) IBOutlet UIButton *divisionButton;
-@property (strong, nonatomic) IBOutlet UIButton *multiplyButton;
-@property (strong, nonatomic) IBOutlet UIButton *subtractButton;
-@property (strong, nonatomic) IBOutlet UIButton *addButton;
-@property (strong, nonatomic) IBOutlet UIButton *totalButton;
-@property (strong, nonatomic) IBOutlet UIButton *dotButton;
+@property (strong, nonatomic) IBOutlet UIButton *buttonClear;
+@property (strong, nonatomic) IBOutlet UIButton *buttonBackspace;
+@property (strong, nonatomic) IBOutlet UIButton *buttonTotal;
+
+@property (strong, nonatomic) IBOutlet UIButton *buttonPosNeg;
+@property (strong, nonatomic) IBOutlet UIButton *buttonDot;
+
+@property (strong, nonatomic) IBOutlet UIButton *buttonAdd;
+@property (strong, nonatomic) IBOutlet UIButton *buttonSubtract;
+@property (strong, nonatomic) IBOutlet UIButton *buttonMultiply;
+@property (strong, nonatomic) IBOutlet UIButton *buttonDivision;
 
 @property (strong, nonatomic) IBOutlet UIButton *buttonNine;
 @property (strong, nonatomic) IBOutlet UIButton *buttonEight;
@@ -73,5 +73,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *buttonTwo;
 @property (strong, nonatomic) IBOutlet UIButton *buttonOne;
 @property (strong, nonatomic) IBOutlet UIButton *buttonZero;
+
+@property (strong, nonatomic) IBOutlet UIView *viewBill;
 
 @end

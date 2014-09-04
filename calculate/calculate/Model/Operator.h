@@ -14,11 +14,16 @@
 }
 
 // Public properties and methods
-- (id)init;
-- (id)initWithType: (NSString*)value;
+- (instancetype)init;
+- (instancetype)initWithType: (char)value;
 
-+ (id)operatorWithType: (NSString*) value;
++ (id)operatorWithType: (char)value;
 
-@property (nonatomic, copy) NSString* type;
+- (BOOL)isAdd;
+- (BOOL)isSubtract;
+- (BOOL)isMultiply;
+- (BOOL)isDivision;
+
+@property (nonatomic) char type;
 
 @end

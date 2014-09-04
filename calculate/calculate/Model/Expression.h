@@ -18,11 +18,11 @@
 }
 
 // Public properties and methods
-- (id)init;
+- (instancetype)init;
 
 - (void)addFraction: (Fraction*)fraction;
 - (void)addOperator: (Operator*)operand;
-- (void)addOperatorWithType: (NSString*)value;
+- (void)addOperatorWithType: (char)value;
 - (void)addLastFraction;
 
 - (void)validate;
@@ -33,7 +33,7 @@
 
 - (double)calculate;
 
-// Test
-- (void)createExpressionTest;
+// Events
+@property (nonatomic, copy) void (^eventDivisionByZero)(void);
 
 @end

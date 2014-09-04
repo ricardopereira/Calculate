@@ -16,10 +16,10 @@
 }
 
 // Public properties and methods
-- (id)init;
-- (id)initWithValue: (double)value;
-- (id)initWithNumber: (NSNumber*)numerator;
-- (id)initWithFraction: (Fraction*)fraction;
+- (instancetype)init;
+- (instancetype)initWithValue: (double)value;
+- (instancetype)initWithNumber: (NSNumber*)numerator;
+- (instancetype)initWithFraction: (Fraction*)fraction;
 
 + (Fraction*)fractionWithValue: (double)value;
 
@@ -31,7 +31,10 @@
 - (void)divideWith: (Fraction*)value;
 - (void)perform: (Operator*)operand With: (Fraction*)value;
 
+- (void)reset;
 - (void)reduce;
+- (BOOL)numeratorIsZero;
+- (BOOL)denominatorIsZero;
 
 - (double)getAsDouble;
 - (NSString*)getAsString;

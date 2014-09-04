@@ -17,7 +17,7 @@
     NSMutableArray *calculus;
 }
 
-- (id)init {
+- (instancetype)init {
     if (self = [super init]) {
         calculus = [[NSMutableArray alloc] init];
         return self;
@@ -53,14 +53,13 @@
     
     // Check the last object: Operator
     if ([[calculus lastObject] isKindOfClass:[Operator class]]) {
-        // ?
         ((Operator*)[calculus lastObject]).type = operand.type;
     }
     else
         [calculus addObject:operand];
 }
 
-- (void)addOperatorWithType: (NSString*)value {
+- (void)addOperatorWithType: (char)value {
     [self addOperator:[Operator operatorWithType:value]];
 }
 
@@ -97,7 +96,16 @@
     // Calculate the complete expression
     for (id item in calculus) {
         if (op != nil) {
-            [f perform:op With:(Fraction*)item];
+            // Check Division by Zero
+            if ([op isDivision] && [(Fraction*)item numeratorIsZero]) {
+                // Cancel
+                [f reset];
+                // Perform event
+                if (self.eventDivisionByZero) self.eventDivisionByZero();
+                break;
+            }
+            else
+                [f perform:op With:(Fraction*)item];
             // Force getting the next operand
             op = nil;
         }
@@ -113,9 +121,6 @@
     return [f getAsDouble];
 }
 
-- (void)createExpressionTest
-{
-    
-}
+# pragma mark Events
 
 @end

@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define ZERO .000000000000f
+
 // Mayber a protocol could be the right choice: @protocol CommonInterface
 
 @interface Common : NSObject

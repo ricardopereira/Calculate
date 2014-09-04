@@ -1,0 +1,57 @@
+
+/* Class = "IBUIButton"; normalTitle = "3"; ObjectID = "0n6-RH-vB2"; */
+"0n6-RH-vB2.normalTitle" = "3";
+
+/* Class = "IBUIButton"; normalTitle = "1"; ObjectID = "5et-Mu-PvS"; */
+"5et-Mu-PvS.normalTitle" = "1";
+
+/* Class = "IBUIButton"; normalTitle = "6"; ObjectID = "A3U-gf-ZnI"; */
+"A3U-gf-ZnI.normalTitle" = "6";
+
+/* Class = "IBUIButton"; normalTitle = "9"; ObjectID = "AcO-T8-swp"; */
+"AcO-T8-swp.normalTitle" = "9";
+
+/* Class = "IBUIViewController"; title = "Calculator"; ObjectID = "BYZ-38-t0r"; */
+"BYZ-38-t0r.title" = "Calculator";
+
+/* Class = "IBUIButton"; normalTitle = "×"; ObjectID = "CC7-aC-uX7"; */
+"CC7-aC-uX7.normalTitle" = "×";
+
+/* Class = "IBUIButton"; normalTitle = "2"; ObjectID = "CEU-D0-hvU"; */
+"CEU-D0-hvU.normalTitle" = "2";
+
+/* Class = "IBUIButton"; normalTitle = "4"; ObjectID = "Eqw-6h-OjQ"; */
+"Eqw-6h-OjQ.normalTitle" = "4";
+
+/* Class = "IBUIButton"; normalTitle = "7"; ObjectID = "HHM-Sc-3cQ"; */
+"HHM-Sc-3cQ.normalTitle" = "7";
+
+/* Class = "IBUILabel"; text = "0"; ObjectID = "PAl-Ho-pjS"; */
+"PAl-Ho-pjS.text" = "0";
+
+/* Class = "IBUIButton"; normalTitle = "÷"; ObjectID = "QPT-2Q-Sjr"; */
+"QPT-2Q-Sjr.normalTitle" = "÷";
+
+/* Class = "IBUIButton"; normalTitle = "="; ObjectID = "SSH-e1-sqD"; */
+"SSH-e1-sqD.normalTitle" = "=";
+
+/* Class = "IBUIButton"; normalTitle = "0"; ObjectID = "V2d-4a-KUL"; */
+"V2d-4a-KUL.normalTitle" = "0";
+
+/* Class = "IBUIButton"; normalTitle = "8"; ObjectID = "XKu-CW-tqq"; */
+"XKu-CW-tqq.normalTitle" = "8";
+
+/* Class = "IBUIButton"; normalTitle = "."; ObjectID = "eBy-Rg-jZN"; */
+"eBy-Rg-jZN.normalTitle" = ".";
+
+/* Class = "IBUIButton"; normalTitle = "5"; ObjectID = "j5A-jK-ueb"; */
+"j5A-jK-ueb.normalTitle" = "5";
+
+/* Class = "IBUIButton"; normalTitle = "C"; ObjectID = "wmb-m6-rGU"; */
+"wmb-m6-rGU.normalTitle" = "C";
+
+/* Class = "IBUIButton"; normalTitle = "−"; ObjectID = "y0S-9w-9jG"; */
+"y0S-9w-9jG.normalTitle" = "−";
+
+/* Class = "IBUIButton"; normalTitle = "+"; ObjectID = "zgp-Am-IIM"; */
+"zgp-Am-IIM.normalTitle" = "+";

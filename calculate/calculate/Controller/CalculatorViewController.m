@@ -8,9 +8,8 @@
 
 #import "CalculatorViewController.h"
 
-#import <math.h>
-
 #import "AppConfig.h"
+#import "Common.h"
 
 @interface CalculatorViewController ()
 
@@ -20,19 +19,25 @@
 - (void)initLayout;
 - (void)loadVerticalLayout;
 - (void)loadHorizontalLayout;
+// Actions
+- (IBAction)resultLongPressed:(id)sender;
 // Calculator
 - (void)clearResult;
-- (void)clearResult: (BOOL)new;
+- (void)clearResult:(BOOL)new;
 - (BOOL)isResultEmpty;
 - (void)addToResult:(NSString*)value;
 - (void)addToResult:(NSString*)value WithForce:(BOOL)forceAdd;
 - (void)removeLast;
 - (void)checkDecimals;
 - (void)prepareNewNumber;
-- (void)selectOperation:(NSString*)op;
+- (void)selectOperation:(char)op;
 // Events
-- (void)onBeforeAddOperator: (id)sender;
-- (void)onAfterAddOperator: (id)sender;
+- (BOOL)onBeforeAddOperator:(id)sender;
+- (BOOL)onAfterAddOperator:(id)sender;
+
+
+//Properties
+@property (strong, nonatomic) UIPopoverController *activityPopover;
 
 @end
 
@@ -46,6 +51,7 @@
     // Private variables
     UIColor *selectedColor, *defaultColor;
     UIButton *lastOperator;
+    UIDeviceOrientation lastOrientation;
 }
 
 @synthesize calculator;
@@ -54,7 +60,8 @@
 #pragma mark - Implementation
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
@@ -63,7 +70,8 @@
     return self;
 }
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     // Config
     [self configure];
@@ -79,45 +87,76 @@
                                              selector:@selector(didOrientationDeviceChanged) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated
+{
     
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
     // Default notification style
     return UIStatusBarStyleDefault;
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void)didOrientationDeviceChanged {
+- (void)didOrientationDeviceChanged
+{
     UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    if (lastOrientation == orientation) return;
+    
     if (orientation == UIDeviceOrientationLandscapeLeft || orientation == UIDeviceOrientationLandscapeRight)
     {
         [self loadHorizontalLayout];
         
-        [UIView animateWithDuration:0.3 animations:^{
-            self.viewBill.alpha = 1.0f;
-        }];
-    }
-    else if (orientation == UIDeviceOrientationFaceUp || orientation == UIDeviceOrientationFaceDown)
-    {
+        if (Feature005_ViewBill == 1) {
+            [UIView animateWithDuration:0.3 animations:^{
+                self.viewBill.alpha = 1.0f;
+            }];
+        }
         
+        // Dismiss if popover is visible
+        if (self.activityPopover) {
+            [self.activityPopover dismissPopoverAnimated:YES];
+            self.activityPopover = nil;
+        }
+        lastOrientation = orientation;
     }
-    else
+    else if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown)
     {
         [self loadVerticalLayout];
         
-        [UIView animateWithDuration:0.3 animations:^{
-            self.viewBill.alpha = 0.0f;
-        }];
+        if (Feature005_ViewBill == 1) {
+            [UIView animateWithDuration:0.3 animations:^{
+                self.viewBill.alpha = 0.0f;
+            }];
+        }
+        
+        // Dismiss if popover is visible
+        if (self.activityPopover) {
+            [self.activityPopover dismissPopoverAnimated:YES];
+            self.activityPopover = nil;
+        }
+        lastOrientation = orientation;
     }
 }
 
-- (void)configure {
+- (void)configure
+{
+    // Result: Long press options
+    if (Feature007_ResultLongPressOptions == 1)
+	{
+        self.resultLabel.userInteractionEnabled = YES;
+        UILongPressGestureRecognizer *resultLongPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(resultLongPressed:)];
+        resultLongPress.minimumPressDuration = 0.2; //Seconds
+        resultLongPress.numberOfTapsRequired = 0;
+        [self.resultLabel addGestureRecognizer:resultLongPress];
+    }
+    
     // Configuration
     if (Feature005_ViewBill)
     {
@@ -131,26 +170,63 @@
     }
 }
 
-- (void)reset {
+- (void)reset
+{
     lastOperator = nil;
     lastExpr = nil;
     // Init calculator
     [calculator clearHistory];
     // Decimal Separator
-    [self.dotButton setTitle:calculator.format.decimalSeparator forState:UIControlStateNormal];
+    [self.buttonDot setTitle:calculator.format.decimalSeparator forState:UIControlStateNormal];
     
-    defaultColor = self.addButton.backgroundColor;
+    defaultColor = self.buttonAdd.backgroundColor;
     selectedColor = [UIColor colorWithRed:214/255.0f green:53/255.0f blue:71/255.0f alpha:1.0f];
     
     // Prepare for expressions
     [self clearResult];
 }
 
+- (IBAction)resultLongPressed:(id)sender
+{
+    if ([self isZero]) return;
+    
+    NSArray *itemsToShare = @[NSLocalizedString(@"Total:",nil), self.resultLabel.text];
+    UIActivityViewController *optionsActivity = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
+    optionsActivity.excludedActivityTypes = @[UIActivityTypeAssignToContact];
+    
+    // iPad
+    optionsActivity.completionHandler = ^(NSString *activityType, BOOL completed)
+    {
+        if (Feature001_Log == 1)
+        {
+            NSLog(@" activityType: %@", activityType);
+            NSLog(@" completed: %i", completed);
+        }
+        self.activityPopover = nil;
+    };
+    
+    if (![self.activityPopover isPopoverVisible]) {
+        self.activityPopover = [[UIPopoverController alloc] initWithContentViewController:optionsActivity];
+        
+        if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
+            // Portrait: [UIScreen mainScreen].bounds
+            [self.activityPopover presentPopoverFromRect:[UIScreen mainScreen].bounds inView:self.view permittedArrowDirections:0 animated:YES];
+        else
+            // Landscape: self.view.bounds
+            [self.activityPopover presentPopoverFromRect:self.view.bounds inView:self.view permittedArrowDirections:0 animated:YES];
+    }
+    // iPhone
+    //[self presentViewController:optionsActivity animated:YES completion:nil];
+}
+
 - (void)setEvents {
     // Clearing history
     calculator.eventBeforeClear = ^(NSObject* sender)
     {
-        NSLog(@"%@",[(Calculator*)sender getAsString]);
+        if (Feature001_Log == 1)
+        {
+            NSLog(@"Cleared: %@",[(Calculator*)sender getAsString]);
+        }
     };
 }
 
@@ -174,6 +250,20 @@
 - (void)clearResult: (BOOL)new {
     lastExpr = expr;
     expr = [calculator newExpression];
+
+    // Self retain in block
+    //__weak typeof(self) weakSelf = self;
+
+    // Message for each expression - Division by Zero
+    if (Feature006_ToastMessages == 1) {
+        expr.eventDivisionByZero = ^{
+            if (Feature001_Log == 1)
+            {
+                NSLog(NSLocalizedString(@"Division by zero",nil));
+            }
+        };
+    }
+    
     [self prepareNewNumber];
     [self setDefaultButtonColor];
     if (new) {
@@ -234,7 +324,12 @@
 
 - (void)removeLast {
     NSString* aux = self.resultLabel.text;
-    if ([aux length] > 0)
+    if ([aux length] == 1)
+    {
+        aux = @"0";
+        countDecimals = 0;
+    }
+    else if ([aux length] > 0)
     {
         aux = [aux substringToIndex:[aux length] - 1];
         // Decrement decimals added
@@ -261,154 +356,140 @@
     return [self.resultLabel.text isEqualToString:@"0"];
 }
 
-- (void)selectOperation:(NSString*)op {
-    [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
-    [expr addOperator:[Operator operatorWithType:op]];
-    
-    [self prepareNewNumber];
+- (void)selectOperation:(char)op {
+    if (lastOperator) {
+        [expr addOperator:[Operator operatorWithType:op]];
+    }
+    else {
+        [expr addFraction:[Fraction fractionWithValue:[self getResult]]];
+        [expr addOperator:[Operator operatorWithType:op]];
+        [self prepareNewNumber];
+    }
 }
 
 #pragma mark - Events
 
-- (void)onBeforeAddOperator: (id)sender {
+- (BOOL)onBeforeAddOperator: (id)sender {
     lastExpr = nil;
+    // Not valid
+    return (lastOperator == sender);
 }
 
-- (void)onAfterAddOperator: (id)sender {
-    
+- (BOOL)onAfterAddOperator: (id)sender {
+    return YES;
 }
 
 #pragma mark - Touch buttons
 
-- (void)touchClear {
-    [self clearButtonClick:self.clearButton];
+- (void)touchClear
+{
+    [self buttonClearTouch:self.buttonClear];
 }
 
-- (void)touchBackspace {
-    [self percentButtonClick:self.percentButton];
+- (void)touchBackspace
+{
+    [self buttonBackspaceTouch:self.buttonBackspace];
 }
 
-- (void)touchDivision {
-    [self divisionButtonClick:self.divisionButton];
+- (void)touchDivision
+{
+    [self buttonOperatorTouch:self.buttonDivision];
 }
 
-- (void)touchMultiply {
-    [self multiplyButtonClick:self.multiplyButton];
+- (void)touchMultiply
+{
+    [self buttonOperatorTouch:self.buttonMultiply];
 }
 
-- (void)touchSubtract {
-    [self subtractButtonClick:self.subtractButton];
+- (void)touchSubtract
+{
+    [self buttonOperatorTouch:self.buttonSubtract];
 }
 
-- (void)touchAdd {
-    [self addButtonClick:self.addButton];
+- (void)touchAdd
+{
+    [self buttonOperatorTouch:self.buttonAdd];
 }
 
-- (void)touchTotal {
-    [self totalButtonClick:self.totalButton];
+- (void)touchTotal
+{
+    [self buttonTotalTouch:self.buttonTotal];
 }
 
-- (void)touchDot {
-    [self dotButtonClick:self.dotButton];
+- (void)touchDot
+{
+    [self buttonDotTouch:self.buttonDot];
 }
 
-- (void)touchTogglePosNeg {
-    [self togglePosNegButtonClick:self.togglePosNegButton];
+- (void)touchTogglePosNeg
+{
+    [self buttonPosNegTouch:self.buttonPosNeg];
 }
 
-- (void)touchOne {
-    [self oneButtonClick:self.buttonOne];
+- (void)touchOne
+{
+    [self buttonNumberTouch:self.buttonOne];
 }
 
-- (void)touchTwo {
-    [self twoButtonClick:self.buttonTwo];
+- (void)touchTwo
+{
+    [self buttonNumberTouch:self.buttonTwo];
 }
 
-- (void)touchThree {
-    [self threeButtonClick:self.buttonThree];
+- (void)touchThree
+{
+    [self buttonNumberTouch:self.buttonThree];
 }
 
-- (void)touchFour {
-    [self fourButtonClick:self.buttonFour];
+- (void)touchFour
+{
+    [self buttonNumberTouch:self.buttonFour];
 }
 
-- (void)touchFive {
-    [self fiveButtonClick:self.buttonFive];
+- (void)touchFive
+{
+    [self buttonNumberTouch:self.buttonFive];
 }
 
-- (void)touchSix {
-    [self sixButtonClick:self.buttonSix];
+- (void)touchSix
+{
+    [self buttonNumberTouch:self.buttonSix];
 }
 
-- (void)touchSeven {
-    [self sevenButtonClick:self.buttonSeven];
+- (void)touchSeven
+{
+    [self buttonNumberTouch:self.buttonSeven];
 }
 
-- (void)touchEight {
-    [self eightButtonClick:self.buttonEight];
+- (void)touchEight
+{
+    [self buttonNumberTouch:self.buttonEight];
 }
 
-- (void)touchNine {
-    [self nineButtonClick:self.buttonNine];
+- (void)touchNine
+{
+    [self buttonNumberTouch:self.buttonNine];
 }
-- (void)touchZero {
-    [self zeroButtonClick:self.buttonZero];
+
+- (void)touchZero
+{
+    [self buttonNumberTouch:self.buttonZero];
 }
 
 #pragma mark - View Events
 
-- (IBAction)dotButtonClick:(id)sender {
-    if ([self.resultLabel.text rangeOfString:calculator.format.decimalSeparator].location == NSNotFound) {
-        [self addToResult:calculator.format.decimalSeparator WithForce:YES];
-        startCountingDecimals = YES;
-    }
+- (IBAction)buttonNumberTouch:(id)sender
+{
+    [self addToResult:[NSString stringWithFormat:@"%d",(int)((UIButton*)sender).tag]];
 }
 
-- (IBAction)zeroButtonClick:(id)sender {
-    [self addToResult:@"0"];
-}
-
-- (IBAction)oneButtonClick:(id)sender {
-    [self addToResult:@"1"];
-}
-
-- (IBAction)twoButtonClick:(id)sender {
-    [self addToResult:@"2"];
-}
-
-- (IBAction)threeButtonClick:(id)sender {
-    [self addToResult:@"3"];
-}
-
-- (IBAction)fourButtonClick:(id)sender {
-    [self addToResult:@"4"];
-}
-
-- (IBAction)fiveButtonClick:(id)sender {
-    [self addToResult:@"5"];
-}
-
-- (IBAction)sixButtonClick:(id)sender {
-    [self addToResult:@"6"];
-}
-
-- (IBAction)sevenButtonClick:(id)sender {
-    [self addToResult:@"7"];
-}
-
-- (IBAction)eightButtonClick:(id)sender {
-    [self addToResult:@"8"];
-}
-
-- (IBAction)nineButtonClick:(id)sender {
-    [self addToResult:@"9"];
-}
-
-- (IBAction)clearButtonClick:(id)sender {
+- (IBAction)buttonClearTouch:(id)sender
+{
     [self clearResult];
 }
 
-- (IBAction)togglePosNegButtonClick:(id)sender {
+- (IBAction)buttonPosNegTouch:(id)sender
+{
     if ([self hasNumber] == NO)
         return;
     // Oposite number
@@ -419,63 +500,50 @@
     [self checkDecimals];
 }
 
-- (IBAction)percentButtonClick:(id)sender {
-    // ToDo
+- (IBAction)buttonDotTouch:(id)sender
+{
+    if ([self.resultLabel.text rangeOfString:calculator.format.decimalSeparator].location == NSNotFound) {
+        [self addToResult:calculator.format.decimalSeparator WithForce:YES];
+        startCountingDecimals = YES;
+    }
+}
+
+- (IBAction)buttonBackspaceTouch:(id)sender
+{
     if ([self hasNumber] == NO)
         return;
     
     [self removeLast];
 }
 
-- (IBAction)divisionButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
+- (IBAction)buttonOperatorTouch:(id)sender
+{
+    if ([self onBeforeAddOperator:sender])
         return;
     
+    // Type of operator
+    switch ([(UIButton*)sender tag]) {
+    case 1:
+        [self selectOperation:'+'];
+        break;
+    case 2:
+        [self selectOperation:'-'];
+        break;
+    case 3:
+        [self selectOperation:'*'];
+        break;
+    case 4:
+        [self selectOperation:'/'];
+        break;
+    }
+    
     [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"/"];
     
     [self onAfterAddOperator: sender];
 }
 
-- (IBAction)multiplyButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
-        return;
-
-    [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"*"];
-    
-    [self onAfterAddOperator: sender];
-}
-
-- (IBAction)subtractButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
-        return;
-
-    [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"-"];
-    
-    [self onAfterAddOperator: sender];
-}
-
-- (IBAction)addButtonClick:(id)sender {
-    [self onBeforeAddOperator: sender];
-    
-    if ([self isResultEmpty] || (lastOperator == sender))
-        return;
-
-    [self setSelectButtonColor:(UIButton *)sender];
-    [self selectOperation:@"+"];
-    
-    [self onAfterAddOperator: sender];
-}
-
-- (IBAction)totalButtonClick:(id)sender {
+- (IBAction)buttonTotalTouch:(id)sender
+{
     // Check input
     if ([expr isEmpty] && [self hasNumber] == NO)
         return;
@@ -507,36 +575,37 @@
 
 #pragma mark - Layout
 
-- (void)initLayout {
+- (void)initLayout
+{
     // Visual Format Language (no Autolayout)
     
     [self.resultLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.resultView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.viewBill setTranslatesAutoresizingMaskIntoConstraints:NO];
     
-    [self.clearButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.togglePosNegButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.percentButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.divisionButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonClear setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonPosNeg setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonBackspace setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonDivision setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.buttonSeven setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.buttonEight setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.buttonNine setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.multiplyButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonMultiply setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.buttonFour setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.buttonFive setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.buttonSix setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.subtractButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonSubtract setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.buttonOne setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.buttonTwo setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.buttonThree setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.addButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonAdd setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     [self.buttonZero setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.dotButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [self.totalButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonDot setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.buttonTotal setTranslatesAutoresizingMaskIntoConstraints:NO];
     
     // Constraints
     // Dictionary with instances of components for Visual Format
@@ -556,7 +625,8 @@
     }
 }
 
-- (void)loadHorizontalLayout {
+- (void)loadHorizontalLayout
+{
     // Remove current constraints
     [self.view removeConstraints:self.view.constraints];
     
@@ -568,38 +638,38 @@
         
         // Constraints
         // Dictionary with instances of components for Visual Format
-        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultView, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton, _viewBill);
+        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultView, _buttonClear, _buttonPosNeg, _buttonBackspace, _buttonDivision, _buttonSeven, _buttonEight, _buttonNine, _buttonMultiply, _buttonFour, _buttonFive, _buttonSix, _buttonSubtract, _buttonOne, _buttonTwo, _buttonThree, _buttonAdd, _buttonZero, _buttonDot, _buttonTotal, _viewBill);
         
         // Common
         [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_resultView]|" options:0 metrics:0 views:viewsDictionary]];
         
         // Horizontal
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_clearButton][_togglePosNegButton(==_clearButton)][_percentButton(==_togglePosNegButton)][_divisionButton(==_percentButton)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonClear][_buttonPosNeg(==_buttonClear)][_buttonBackspace(==_buttonPosNeg)][_buttonDivision(==_buttonBackspace)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_multiplyButton(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_buttonMultiply(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_subtractButton(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_buttonSubtract(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_addButton(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_buttonAdd(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonZero][_dotButton(==_buttonTwo)][_totalButton(==_dotButton)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_viewBill][_buttonZero][_buttonDot(==_buttonTwo)][_buttonTotal(==_buttonDot)]|" options:0 metrics:0 views:viewsDictionary]];
         
         // Vertical
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_clearButton(==_resultView)][_buttonSeven(==_clearButton)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonClear(==_resultView)][_buttonSeven(==_buttonClear)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_togglePosNegButton(==_clearButton)][_buttonEight(==_buttonSeven)][_buttonFive(==_buttonFour)][_buttonTwo(==_buttonOne)][_buttonZero(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonPosNeg(==_buttonClear)][_buttonEight(==_buttonSeven)][_buttonFive(==_buttonFour)][_buttonTwo(==_buttonOne)][_buttonZero(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_percentButton(==_clearButton)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_dotButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonBackspace(==_buttonClear)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_buttonDot(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_divisionButton(==_clearButton)][_multiplyButton(==_buttonSeven)][_subtractButton(==_buttonFour)][_addButton(==_buttonOne)][_totalButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonDivision(==_buttonClear)][_buttonMultiply(==_buttonSeven)][_buttonSubtract(==_buttonFour)][_buttonAdd(==_buttonOne)][_buttonTotal(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
     }
     else
     {
         // Constraints
         // Dictionary with instances of components for Visual Format
-        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultView, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton);
+        NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultView, _buttonClear, _buttonPosNeg, _buttonBackspace, _buttonDivision, _buttonSeven, _buttonEight, _buttonNine, _buttonMultiply, _buttonFour, _buttonFive, _buttonSix, _buttonSubtract, _buttonOne, _buttonTwo, _buttonThree, _buttonAdd, _buttonZero, _buttonDot, _buttonTotal);
         
         
         // Common
@@ -607,29 +677,30 @@
         
         // Horizontal
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_clearButton][_togglePosNegButton(==_clearButton)][_percentButton(==_togglePosNegButton)][_divisionButton(==_percentButton)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonClear][_buttonPosNeg(==_buttonClear)][_buttonBackspace(==_buttonPosNeg)][_buttonDivision(==_buttonBackspace)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_multiplyButton(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_buttonMultiply(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_subtractButton(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_buttonSubtract(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_addButton(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_buttonAdd(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonZero][_dotButton(==_buttonTwo)][_totalButton(==_dotButton)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonZero][_buttonDot(==_buttonTwo)][_buttonTotal(==_buttonDot)]|" options:0 metrics:0 views:viewsDictionary]];
         
         // Vertical
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_clearButton(==_resultView)][_buttonSeven(==_clearButton)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonClear(==_resultView)][_buttonSeven(==_buttonClear)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_togglePosNegButton(==_clearButton)][_buttonEight(==_buttonSeven)][_buttonFive(==_buttonFour)][_buttonTwo(==_buttonOne)][_buttonZero(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonPosNeg(==_buttonClear)][_buttonEight(==_buttonSeven)][_buttonFive(==_buttonFour)][_buttonTwo(==_buttonOne)][_buttonZero(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_percentButton(==_clearButton)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_dotButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonBackspace(==_buttonClear)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_buttonDot(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
         
-        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_divisionButton(==_clearButton)][_multiplyButton(==_buttonSeven)][_subtractButton(==_buttonFour)][_addButton(==_buttonOne)][_totalButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+        [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonDivision(==_buttonClear)][_buttonMultiply(==_buttonSeven)][_buttonSubtract(==_buttonFour)][_buttonAdd(==_buttonOne)][_buttonTotal(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
     }
 }
 
-- (void)loadVerticalLayout {
+- (void)loadVerticalLayout
+{
     // Remove current constraints
     [self.view removeConstraints:self.view.constraints];
     
@@ -641,32 +712,32 @@
     
     // Constraints
     // Dictionary with instances of components for Visual Format
-    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultView, _clearButton, _togglePosNegButton, _percentButton, _divisionButton, _buttonSeven, _buttonEight, _buttonNine, _multiplyButton, _buttonFour, _buttonFive, _buttonSix, _subtractButton, _buttonOne, _buttonTwo, _buttonThree, _addButton, _buttonZero, _dotButton, _totalButton);
+    NSDictionary *viewsDictionary = NSDictionaryOfVariableBindings(_resultView, _buttonClear, _buttonPosNeg, _buttonBackspace, _buttonDivision, _buttonSeven, _buttonEight, _buttonNine, _buttonMultiply, _buttonFour, _buttonFive, _buttonSix, _buttonSubtract, _buttonOne, _buttonTwo, _buttonThree, _buttonAdd, _buttonZero, _buttonDot, _buttonTotal);
     
     // Common
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_resultView]|" options:0 metrics:0 views:viewsDictionary]];
     
     // Horizontal
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_clearButton][_togglePosNegButton(==_clearButton)][_percentButton(==_togglePosNegButton)][_divisionButton(==_percentButton)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonClear][_buttonPosNeg(==_buttonClear)][_buttonBackspace(==_buttonPosNeg)][_buttonDivision(==_buttonBackspace)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_multiplyButton(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonSeven][_buttonEight(==_buttonSeven)][_buttonNine(==_buttonEight)][_buttonMultiply(==_buttonNine)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_subtractButton(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonFour][_buttonFive(==_buttonFour)][_buttonSix(==_buttonFive)][_buttonSubtract(==_buttonSix)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_addButton(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonOne][_buttonTwo(==_buttonOne)][_buttonThree(==_buttonTwo)][_buttonAdd(==_buttonThree)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonZero][_dotButton(==_buttonTwo)][_totalButton(==_dotButton)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_buttonZero][_buttonDot(==_buttonTwo)][_buttonTotal(==_buttonDot)]|" options:0 metrics:0 views:viewsDictionary]];
     
     // Vertical
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_clearButton(==_resultView)][_buttonSeven(==_clearButton)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonClear(==_resultView)][_buttonSeven(==_buttonClear)][_buttonFour(==_buttonSeven)][_buttonOne(==_buttonFour)][_buttonZero(==_buttonOne)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_togglePosNegButton(==_clearButton)][_buttonEight(==_buttonSeven)][_buttonFive(==_buttonFour)][_buttonTwo(==_buttonOne)][_buttonZero(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonPosNeg(==_buttonClear)][_buttonEight(==_buttonSeven)][_buttonFive(==_buttonFour)][_buttonTwo(==_buttonOne)][_buttonZero(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_percentButton(==_clearButton)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_dotButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonBackspace(==_buttonClear)][_buttonNine(==_buttonSeven)][_buttonSix(==_buttonFour)][_buttonThree(==_buttonOne)][_buttonDot(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
     
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_divisionButton(==_clearButton)][_multiplyButton(==_buttonSeven)][_subtractButton(==_buttonFour)][_addButton(==_buttonOne)][_totalButton(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_resultView][_buttonDivision(==_buttonClear)][_buttonMultiply(==_buttonSeven)][_buttonSubtract(==_buttonFour)][_buttonAdd(==_buttonOne)][_buttonTotal(==_buttonZero)]|" options:0 metrics:0 views:viewsDictionary]];
 }
 
 @end

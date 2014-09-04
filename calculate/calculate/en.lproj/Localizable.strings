@@ -1,0 +1,10 @@
+/* 
+  Localizable.strings
+  Calculate
+
+  Created by Ricardo Pereira on 12/02/14.
+  Copyright (c) 2014 Ricardo Pereira. All rights reserved.
+*/
+"Failed" = "Failed";
+"Division by zero" = "Division by zero";
+"Total:" = "Total:";

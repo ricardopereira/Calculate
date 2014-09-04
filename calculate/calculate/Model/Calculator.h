@@ -11,7 +11,6 @@
 #import "Expression.h"
 
 #define DECIMALS 12
-#define ZERO .000000000000f
 
 @interface Calculator : Common
 {
@@ -19,7 +18,7 @@
 }
 
 // Public properties and methods
-- (id)init;
+- (instancetype)init;
 
 - (Expression*)newExpression;
 - (void)add: (Expression*)expr;

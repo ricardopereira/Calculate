@@ -9,6 +9,7 @@
 #define MIXPANEL_TOKEN @"f2f7c8d0d12bd422fdc9b1ef6d6ab0b2"
 
 #import "AppDelegate.h"
+#import "AppConfig.h"
 
 #import <Crashlytics/Crashlytics.h>
 #import "Mixpanel.h"
@@ -41,10 +42,11 @@ Calculator *calculator;
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
     [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"hh:mm a" options:0 locale:[NSLocale currentLocale]]];
     
-    [mixpanel track:@"Test" properties:@{
-        @"Opened": [dateFormatter stringFromDate:[NSDate date]],
-        @"Plan": @"Free"
-    }];
+    if (Feature004_MixpanelRecords == 1)
+        [mixpanel track:@"AppOpen" properties:@{
+            @"Opened": [dateFormatter stringFromDate:[NSDate date]],
+            @"Plan": @"Free"
+        }];
     
     return YES;
 }
