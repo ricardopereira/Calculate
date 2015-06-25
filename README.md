@@ -9,6 +9,8 @@ Calculate
 Setup
 -----
 
+You need [RubyGems](https://rubygems.org).
+
 Run `bin/setup`
 
 This will:
