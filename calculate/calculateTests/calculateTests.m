@@ -117,17 +117,48 @@
 }
 
 - (void)testNumberWithNumberRepeatLast {
-    // 13 + 2 + 2 = 17
+    // 13 + 2 + 2 + 2 = 19
     [self.vc touchOne];
     [self.vc touchThree];
     [self.vc touchAdd];
     [self.vc touchTwo];
     [self.vc touchTotal];
     [self.vc touchTotal];
+    [self.vc touchTotal];
     // Check
     XCTAssertNotNil(self.vc.resultLabel.text);
-    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"17"]);
-    XCTAssertTrue([self.vc getResult] == 17);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"19"]);
+    XCTAssertTrue([self.vc getResult] == 19);
+}
+
+- (void)testNumberWithZeroRepeatLast {
+    // 13 + 0 + 0 + 0 = 13
+    [self.vc touchOne];
+    [self.vc touchThree];
+    [self.vc touchAdd];
+    [self.vc touchZero];
+    [self.vc touchTotal];
+    [self.vc touchTotal];
+    [self.vc touchTotal];
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"13"]);
+    XCTAssertTrue([self.vc getResult] == 13);
+}
+
+- (void)testNumberWithNegNumberRepeatLast {
+    // 13 - 2 - 2 - 2 = 7
+    [self.vc touchOne];
+    [self.vc touchThree];
+    [self.vc touchSubtract];
+    [self.vc touchTwo];
+    [self.vc touchTotal];
+    [self.vc touchTotal];
+    [self.vc touchTotal];
+    // Check
+    XCTAssertNotNil(self.vc.resultLabel.text);
+    XCTAssertTrue([self.vc.resultLabel.text isEqualToString:@"7"]);
+    XCTAssertTrue([self.vc getResult] == 7);
 }
 
 - (void)testZeroWithNumberRepeatLast {

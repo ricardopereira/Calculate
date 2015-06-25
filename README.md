@@ -4,12 +4,37 @@ Calculate
 
 ![Image 1](https://dl.dropboxusercontent.com/u/11377305/websites/calculate/app-preview.png)
 
-Requirements
-============
+[![Download on the App Store](http://troposweather.com/assets/images/app-store-badge-5eb1a238.svg)](https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=805143341&mt=8)
 
-* You will need [cocoapods](http://cocoapods.org/) in order to build this project.
+Setup
+-----
+
+Run `bin/setup`
+
+This will:
+
+- Install the gem dependencies
+- Install the pod dependencies
+- Create `Secrets.h`. `CalculateMixpanelToken` is the only one required for the
+  application to run.
+
+Testing
+-------
+
+Run `bin/test`
+
+This will run the tests from the command line, and pipe the result through
+[XCPretty]().
+
+License
+-------
+
+Tropos is Copyright (c) 2015 thoughtbot, inc. It is free software,
+and may be redistributed under the terms specified in the [LICENSE] file.
+
+[LICENSE]: /LICENSE
 
 Contact
-============
+-------
 
-You can reach me on my twitter [@ricardopereiraw](https://twitter.com/ricardopereiraw).
+You can reach me on twitter [@ricardopereiraw](https://twitter.com/ricardopereiraw).
