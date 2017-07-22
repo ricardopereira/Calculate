@@ -2,9 +2,9 @@ Calculate
 ============
 ###### A personal calculator, version 1
 
-![Image 1](https://dl.dropboxusercontent.com/u/11377305/websites/calculate/app-preview.png)
+![screenshot](https://github.com/ricardopereira/resources/blob/master/img/calculate-app-screen.png?raw=true)
 
-[![Download on the App Store](http://troposweather.com/assets/images/app-store-badge-5eb1a238.svg)](https://itunes.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=805143341&mt=8)
+![Download on the App Store](https://raw.githubusercontent.com/ricardopereira/resources/master/img/appstore-badge.png)
 
 Setup
 -----
