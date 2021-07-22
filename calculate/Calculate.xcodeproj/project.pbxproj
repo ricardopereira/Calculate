@@ -472,6 +472,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 100;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -480,6 +481,7 @@
 				GCC_PREFIX_HEADER = "Calculate/Calculate-Prefix.pch";
 				INFOPLIST_FILE = "Calculate/Calculate-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = pt.ricardopereira.Calculate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -495,6 +497,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 100;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -503,6 +506,7 @@
 				GCC_PREFIX_HEADER = "Calculate/Calculate-Prefix.pch";
 				INFOPLIST_FILE = "Calculate/Calculate-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = pt.ricardopereira.Calculate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
