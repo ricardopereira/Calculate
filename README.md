@@ -1,42 +1,22 @@
 Calculate
 ============
-###### A personal calculator, version 1
+###### A personal calculator
 
-![screenshot](https://github.com/ricardopereira/resources/blob/master/img/calculate-app-screen.png?raw=true)
+![screenshot](https://github.com/ricardopereira/Calculate/raw/master/resources/screens/app-preview.png)
 
 ![Download on the App Store](https://raw.githubusercontent.com/ricardopereira/resources/master/img/appstore-badge.png)
 
-Setup
------
-
-You need [RubyGems](https://rubygems.org).
-
-Run `bin/setup`
-
-This will:
-
-- Install the gem dependencies
-- Install the pod dependencies
-- Create `Secrets.h`. `CalculateMixpanelToken` is the only one required for the
-  application to run.
-
-Testing
+Tests
 -------
 
-Run `bin/test`
+Run tests by executing the following command:
 
-This will run the tests from the command line, and pipe the result through
-[XCPretty](https://github.com/supermarin/xcpretty).
+`xcodebuild -scheme Calculate -project ./Calculate.xcodeproj -destination 'platform=iOS Simulator,OS=14.5,name=iPad Pro (12.9-inch) (2nd generation)' test`
 
 License
 -------
 
-Tropos is Copyright (c) 2015 thoughtbot, inc. It is free software,
+Calculate is Copyright (c) 2021 Whitesmith, Lda. It is free software,
 and may be redistributed under the terms specified in the [LICENSE] file.
 
 [LICENSE]: /LICENSE.md
-
-Contact
--------
-
-You can reach me on twitter [@ricardopereiraw](https://twitter.com/ricardopereiraw).
