@@ -35,10 +35,6 @@
 - (BOOL)onBeforeAddOperator:(id)sender;
 - (BOOL)onAfterAddOperator:(id)sender;
 
-
-//Properties
-@property (strong, nonatomic) UIPopoverController *activityPopover;
-
 @end
 
 @implementation CalculatorViewController
@@ -119,11 +115,6 @@
             }];
         }
         
-        // Dismiss if popover is visible
-        if (self.activityPopover) {
-            [self.activityPopover dismissPopoverAnimated:YES];
-            self.activityPopover = nil;
-        }
         lastOrientation = orientation;
     }
     else if (orientation == UIDeviceOrientationPortrait || orientation == UIDeviceOrientationPortraitUpsideDown)
@@ -136,11 +127,6 @@
             }];
         }
         
-        // Dismiss if popover is visible
-        if (self.activityPopover) {
-            [self.activityPopover dismissPopoverAnimated:YES];
-            self.activityPopover = nil;
-        }
         lastOrientation = orientation;
     }
 }
@@ -186,37 +172,17 @@
     [self clearResult];
 }
 
-- (IBAction)resultLongPressed:(id)sender
+- (IBAction)resultLongPressed:(UILongPressGestureRecognizer *)sender
 {
-    if ([self isZero]) return;
-    
-    NSArray *itemsToShare = @[NSLocalizedString(@"Total:",nil), self.resultLabel.text];
-    UIActivityViewController *optionsActivity = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
-    optionsActivity.excludedActivityTypes = @[UIActivityTypeAssignToContact];
-    
-    // iPad
-    optionsActivity.completionHandler = ^(NSString *activityType, BOOL completed)
-    {
-        if (Feature001_Log == 1)
-        {
-            NSLog(@" activityType: %@", activityType);
-            NSLog(@" completed: %i", completed);
-        }
-        self.activityPopover = nil;
-    };
-    
-    if (![self.activityPopover isPopoverVisible]) {
-        self.activityPopover = [[UIPopoverController alloc] initWithContentViewController:optionsActivity];
-        
-        if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation))
-            // Portrait: [UIScreen mainScreen].bounds
-            [self.activityPopover presentPopoverFromRect:[UIScreen mainScreen].bounds inView:self.view permittedArrowDirections:0 animated:YES];
-        else
-            // Landscape: self.view.bounds
-            [self.activityPopover presentPopoverFromRect:self.view.bounds inView:self.view permittedArrowDirections:0 animated:YES];
+    if ([self isZero]) {
+        return;
     }
-    // iPhone
-    //[self presentViewController:optionsActivity animated:YES completion:nil];
+    NSArray *itemsToShare = @[NSLocalizedString(@"Total:",nil), self.resultLabel.text];
+    UIActivityViewController *activityViewController = [[UIActivityViewController alloc] initWithActivityItems:itemsToShare applicationActivities:nil];
+    activityViewController.excludedActivityTypes = @[UIActivityTypeAssignToContact];
+    activityViewController.popoverPresentationController.sourceRect = sender.view.bounds;
+    activityViewController.popoverPresentationController.sourceView = sender.view;
+    [self presentViewController:activityViewController animated:YES completion:nil];
 }
 
 - (void)setEvents {
