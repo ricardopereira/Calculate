@@ -166,7 +166,7 @@
     [self.buttonDot setTitle:calculator.format.decimalSeparator forState:UIControlStateNormal];
     
     defaultColor = self.buttonAdd.backgroundColor;
-    selectedColor = [UIColor colorWithRed:214/255.0f green:53/255.0f blue:71/255.0f alpha:1.0f];
+    selectedColor = [UIColor systemRedColor];
     
     // Prepare for expressions
     [self clearResult];
