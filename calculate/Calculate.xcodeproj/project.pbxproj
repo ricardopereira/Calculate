@@ -254,7 +254,7 @@
 				ORGANIZATIONNAME = "Ricardo Pereira";
 				TargetAttributes = {
 					D75BE8C41811FDB500E53949 = {
-						DevelopmentTeam = JC9BAC9Y39;
+						DevelopmentTeam = 2E58BZR8M3;
 					};
 					D75BE8E51811FDB500E53949 = {
 						TestTargetID = D75BE8C41811FDB500E53949;
@@ -473,6 +473,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 100;
+				DEVELOPMENT_TEAM = 2E58BZR8M3;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -498,6 +499,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 100;
+				DEVELOPMENT_TEAM = 2E58BZR8M3;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
