@@ -24,6 +24,7 @@
 - (void)addOperator: (Operator*)operand;
 - (void)addOperatorWithType: (char)value;
 - (void)addLastFraction;
+- (void)addLastOperator;
 
 - (void)validate;
 - (void)clear;

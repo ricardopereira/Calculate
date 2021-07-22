@@ -31,12 +31,28 @@
     [calculus addObject:fraction];
 }
 
+- (void)addLastOperator {
+    if ([self isEmpty]) return;
+    // Add a copy of the last operator
+    NSUInteger i = calculus.count-1;
+    for (; i>=0; i--) {
+        if ([[calculus objectAtIndex:i] isKindOfClass:[Operator class]] ) {
+            [calculus addObject:(Operator*)[calculus objectAtIndex:i]];
+            break;
+        }
+    }
+}
+
 - (void)addLastFraction {
     if ([self isEmpty]) return;
-    // Check if expression is valid
-    [self validate];
     // Add a copy of the last number
-    [calculus addObject:(Fraction*)[calculus lastObject]];
+    NSUInteger i = calculus.count-1;
+    for (; i>=0; i--) {
+        if ([[calculus objectAtIndex:i] isKindOfClass:[Fraction class]] ) {
+            [calculus addObject:(Fraction*)[calculus objectAtIndex:i]];
+            break;
+        }
+    }
 }
 
 - (void)validate {

@@ -217,9 +217,6 @@
     lastExpr = expr;
     expr = [calculator newExpression];
 
-    // Self retain in block
-    //__weak typeof(self) weakSelf = self;
-
     // Message for each expression - Division by Zero
     if (Feature006_ToastMessages == 1) {
         expr.eventDivisionByZero = ^{
@@ -520,6 +517,7 @@
         // If empty then add the last one
         if ([expr isEmpty] && lastExpr) {
             expr = lastExpr;
+            [expr addLastOperator];
             [expr addLastFraction];
         }
         else
