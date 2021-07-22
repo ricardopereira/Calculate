@@ -9,9 +9,6 @@
 #import "AppDelegate.h"
 #import "AppConfig.h"
 
-#import "Secrets.h"
-#import "Mixpanel.h"
-
 #import "Calculator.h"
 #import "CalculatorViewController.h"
 
@@ -26,23 +23,10 @@ Calculator *calculator;
     
     CalculatorViewController *defaultView = (CalculatorViewController *)self.window.rootViewController;
     defaultView.calculator = calculator;
-    
-    // Initialize the library with your
-    // Mixpanel project token
-    [Mixpanel sharedInstanceWithToken:CalculateMixpanelToken];
-    
-    // Later, you can get your instance with
-    Mixpanel *mixpanel = [Mixpanel sharedInstance];
-    
+
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
     [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:@"hh:mm a" options:0 locale:[NSLocale currentLocale]]];
-    
-    if (Feature004_MixpanelRecords == 1)
-        [mixpanel track:@"AppOpen" properties:@{
-            @"Opened": [dateFormatter stringFromDate:[NSDate date]],
-            @"Plan": @"Free"
-        }];
-    
+        
     return YES;
 }
 							
